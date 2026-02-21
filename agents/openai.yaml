@@ -18,6 +18,7 @@ policy:
   require_validation_before_mutation: true
   require_post_export_smoke_trace: true
   require_explicit_node_reference_syntax: true
+  require_run_details_on_failure: true
   on_dependency_failure: "return_mcp_connection_instructions"
   on_capability_gap: "propose_reusable_integration_and_request_decision"
 

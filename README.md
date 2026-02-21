@@ -66,7 +66,8 @@ For exported MCP tools, agents must:
 
 1. perform a smoke invocation,
 2. inspect latest workflow runs via `control.runs.list`,
-3. include `run_id` and `trace_id` in failure summaries when execution fails.
+3. inspect full node outputs/timeline via `control.runs.details` when run fails,
+4. include `run_id` and `trace_id` in failure summaries when execution fails.
 
 ## Data Reference Syntax
 

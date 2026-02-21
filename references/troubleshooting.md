@@ -31,8 +31,9 @@ Use this table with `contracts/error-taxonomy.yaml`.
 
 1. Capture `run_id` / `trace_id` from tool response when available.
 2. Call `control.runs.list` for the target workflow.
-3. Inspect latest `FAILED` run entries and `trigger_meta.trace_id`.
-4. Report failure summary with `run_id`, `trace_id`, and next fix action.
+3. Call `control.runs.details` for failed run IDs.
+4. Inspect output nodes, timeline entries, and `trigger_meta.trace_id`.
+5. Report failure summary with `run_id`, `trace_id`, and next fix action.
 
 ## MCP Not Connected: User Instruction Runbook
 

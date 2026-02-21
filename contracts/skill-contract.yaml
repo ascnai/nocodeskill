@@ -1,5 +1,5 @@
 skill_name: mcp-control-operator
-version: 1.3.1
+version: 1.4.0
 owner: platform-ai
 maturity: beta
 
@@ -24,6 +24,7 @@ compatibility:
     - control.tools.list_exports
     - control.tools.ensure_export
     - control.runs.list
+    - control.runs.details
 
 input_contract:
   required_fields:
@@ -113,6 +114,7 @@ execution_policy:
       - control.workflows.activate
       - invoke_exported_tool_smoke
       - control.runs.list
+      - control.runs.details
     delete:
       - control.workflows.describe
       - control.workflows.delete
@@ -170,6 +172,7 @@ output_contract:
     runtime_failures:
       - run_trace
       - latest_runs
+      - run_details
 
 observability:
   required_metrics:

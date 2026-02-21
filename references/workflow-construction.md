@@ -58,8 +58,9 @@ For workflows exported as MCP tools:
 
 1. invoke exported tool with minimal valid payload.
 2. call `control.runs.list` for target `workflow_id`.
-3. verify latest run status and capture `trace_id` from `trigger_meta`.
-4. if failed, report `run_id`, `trace_id`, and failure summary before further mutations.
+3. call `control.runs.details` for the selected run.
+4. verify latest run status, output nodes, and capture `trace_id` from `trigger_meta`.
+5. if failed, report `run_id`, `trace_id`, and node-level failure summary before further mutations.
 
 ## Minimal Deterministic Example
 

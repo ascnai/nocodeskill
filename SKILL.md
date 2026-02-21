@@ -1,6 +1,6 @@
 ---
 name: mcp-control-operator
-version: 1.3.1
+version: 1.4.0
 owner: platform-ai
 maturity: beta
 description: Deterministic workflow lifecycle and tool-export operator for ASCN workspace MCP control tools.
@@ -46,6 +46,7 @@ The target gateway MUST expose these tools:
 11. `control.tools.list_exports`
 12. `control.tools.ensure_export`
 13. `control.runs.list`
+14. `control.runs.details`
 
 If required tools are unavailable, the operator MUST fail fast with a dependency error summary.
 
@@ -132,6 +133,7 @@ If status is not `sufficient`, the operator MUST NOT invent handler/trigger name
 6. `control.workflows.activate`
 7. invoke exported tool with minimal valid payload
 8. `control.runs.list` for latest run verification
+9. `control.runs.details` for node outputs and timeline diagnostics
 
 `delete`
 
@@ -161,7 +163,8 @@ After export and activation, operator MUST validate runtime behavior:
 1. invoke exported MCP tool with minimal valid payload
 2. query latest runs via `control.runs.list`
 3. confirm latest run status is expected (`COMPLETED` for happy-path smoke)
-4. if run fails, include `run_id` and `trace_id` in failure summary
+4. inspect full run payload via `control.runs.details` when run is failed or unexpected
+5. if run fails, include `run_id` and `trace_id` in failure summary
 
 ## Idempotency and Retry
 

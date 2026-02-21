@@ -2,6 +2,21 @@
 
 All notable changes to this repository are documented here.
 
+## [1.4.0] - 2026-02-21
+
+### Added
+
+- Required control tool `control.runs.details` for full run diagnostics.
+- Export flow now includes node-level runtime inspection with:
+  - `control.runs.list`
+  - `control.runs.details`
+- Runtime failure output contract now includes `run_details`.
+
+### Changed
+
+- `SKILL.md` now requires full run details inspection for failed or unexpected smoke runs.
+- `contracts/skill-contract.yaml` updated to `1.4.0` with new required tool and export sequence.
+
 ## [1.3.1] - 2026-02-21
 
 ### Added
