@@ -1,48 +1,50 @@
 # Troubleshooting Reference
 
-## 403 During Agent Workflow Operations
+Use this table with `contracts/error-taxonomy.yaml`.
 
-Check in this order:
+## Fast Triage Order
 
-1. MCP URL is `/v1/workspaces/{workspace_id}/mcp`.
-2. The same `workspace_id` is used across all control calls.
-3. Target `workflow_id` belongs to that workspace.
-4. Workflow is valid before activation (`control.workflows.validate`).
+1. Confirm MCP URL: `/v1/workspaces/{workspace_id}/mcp`.
+2. Confirm workspace consistency across all calls.
+3. Confirm target workflow belongs to workspace.
+4. Confirm validation result before activation.
 
-If issue persists, re-run with explicit sequence:
+## Error Mapping
+
+| Symptom | Taxonomy Code | Class | Action |
+|---|---|---|---|
+| invalid activity type | E_VALIDATION_UNKNOWN_ACTIVITY_TYPE | validation | use canonical handler from registry list/details |
+| edge points to unknown node | E_VALIDATION_UNKNOWN_EDGE_TARGET | validation | fix `edges[].to` or add node |
+| not reachable | E_VALIDATION_REACHABILITY | validation | add directed path between nodes |
+| unsupported directive | E_VALIDATION_UNSUPPORTED_DIRECTIVE | validation | wrap with `={{ ... }}` |
+| 403 / workspace mismatch | E_CONTEXT_FORBIDDEN / E_CONTEXT_WORKSPACE_MISMATCH | context | correct workspace and workflow binding |
+| workflow not found in workspace | E_CONTEXT_WORKFLOW_NOT_FOUND | context | re-discover with workflows list/describe |
+| duplicate export name | E_EXPORT_CANONICAL_NAME_CONFLICT | export_conflict | list exports, reconcile tool/handler |
+| export outputPath invalid | E_EXPORT_INVALID_OUTPUT_PATH | export_conflict | patch output path, validate, activate |
+| timeout / 5xx | E_TRANSIENT_TIMEOUT / E_TRANSIENT_UPSTREAM_5XX | transient | retry with bounded backoff |
+
+## Repair Sequence
 
 1. `control.docs.get`
-2. `control.workflows.validate`
-3. `control.workflows.patch` (fixes)
-4. `control.workflows.activate`
+2. `control.workflows.list`
+3. `control.workflows.describe`
+4. `control.workflows.validate`
+5. `control.workflows.patch`
+6. `control.workflows.activate`
 
-## Common Validation Failures
+## Export Repair Sequence
 
-### Unknown activity type
+1. `control.workflows.describe`
+2. `control.tools.list_exports` (use `include_invalid=true` when needed)
+3. `control.tools.ensure_export`
+4. `control.workflows.validate`
+5. `control.workflows.activate`
 
-- Cause: non-canonical handler name.
-- Fix: `control.registry.list`, then `control.registry.details`, then update `type`.
+## Stop Conditions
 
-### Unknown edge target
+Stop and return failure summary when:
 
-- Cause: `edges[].to` references missing activity id.
-- Fix: correct target ids or add missing node.
-
-### Reachability error
-
-- Cause: upstream reference with no directed path.
-- Fix: add connecting edges.
-
-### Unsupported directive
-
-- Cause: raw `$...` string where expression wrapper is required.
-- Fix: use `={{ ... }}`.
-
-## Repair Strategy for Invalid Auto-Generated Workflows
-
-1. Build intended execution order as linear/branched plan.
-2. Add trigger entry edges to first step(s).
-3. Add activity edges for every transition.
-4. Convert ambiguous `$json` reads to `$node[...]` where upstream data is needed.
-5. Validate until no errors.
-6. Activate only after clean validation.
+1. required tool surface is missing
+2. workspace/workflow context cannot be resolved
+3. validation errors persist after attempted patching
+4. destructive action lacks explicit confirmation

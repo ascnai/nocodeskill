@@ -1,0 +1,58 @@
+version: 1.0.0
+
+classes:
+  - class: validation
+    retryable: false
+    severity: medium
+    policy:
+      action: patch_payload
+      stop_after_attempts: 1
+    codes:
+      - E_VALIDATION_UNKNOWN_ACTIVITY_TYPE
+      - E_VALIDATION_UNKNOWN_EDGE_TARGET
+      - E_VALIDATION_REACHABILITY
+      - E_VALIDATION_UNSUPPORTED_DIRECTIVE
+      - E_VALIDATION_TOOL_RETURNS_SCHEMA_MISMATCH
+
+  - class: context
+    retryable: false
+    severity: high
+    policy:
+      action: correct_workspace_or_workflow_binding
+      stop_after_attempts: 1
+    codes:
+      - E_CONTEXT_WORKSPACE_MISMATCH
+      - E_CONTEXT_WORKFLOW_NOT_FOUND
+      - E_CONTEXT_FORBIDDEN
+
+  - class: export_conflict
+    retryable: false
+    severity: medium
+    policy:
+      action: list_exports_then_reconcile
+      stop_after_attempts: 1
+    codes:
+      - E_EXPORT_CANONICAL_NAME_CONFLICT
+      - E_EXPORT_INVALID_OUTPUT_PATH
+      - E_EXPORT_NOT_EXPOSED
+
+  - class: transient
+    retryable: true
+    severity: low
+    policy:
+      action: retry_with_backoff
+      max_attempts: 3
+      initial_delay_ms: 250
+    codes:
+      - E_TRANSIENT_TIMEOUT
+      - E_TRANSIENT_UPSTREAM_5XX
+      - E_TRANSIENT_GATEWAY_UNAVAILABLE
+
+mapping_hints:
+  invalid_activity_type: E_VALIDATION_UNKNOWN_ACTIVITY_TYPE
+  edge_points_to_unknown_node: E_VALIDATION_UNKNOWN_EDGE_TARGET
+  not_reachable: E_VALIDATION_REACHABILITY
+  unsupported_templating_directive: E_VALIDATION_UNSUPPORTED_DIRECTIVE
+  workflow_not_found_in_workspace: E_CONTEXT_WORKFLOW_NOT_FOUND
+  status_403: E_CONTEXT_FORBIDDEN
+  duplicate_tool_export_name: E_EXPORT_CANONICAL_NAME_CONFLICT

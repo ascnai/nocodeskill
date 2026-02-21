@@ -1,0 +1,123 @@
+skill_name: mcp-control-operator
+version: 1.0.0
+owner: platform-ai
+maturity: beta
+
+compatibility:
+  protocol: mcp
+  required_tools:
+    - control.docs.get
+    - control.registry.list
+    - control.registry.details
+    - control.workflows.list
+    - control.workflows.describe
+    - control.workflows.validate
+    - control.workflows.create
+    - control.workflows.patch
+    - control.workflows.activate
+    - control.workflows.delete
+    - control.tools.list_exports
+    - control.tools.ensure_export
+
+input_contract:
+  required_fields:
+    - workspace_id
+    - intent
+  optional_fields:
+    - workflow_id
+    - workflow_name
+    - export_tool
+    - export_handler
+    - required_secrets
+  validation:
+    workspace_id: uuid
+    intent:
+      enum:
+        - create
+        - repair
+        - patch
+        - export
+        - delete
+        - explain
+
+execution_policy:
+  deterministic: true
+  validate_before_mutation: true
+  requires_explicit_delete_confirm: true
+  call_sequences:
+    create:
+      - control.docs.get
+      - control.workflows.list
+      - control.registry.list
+      - control.registry.details
+      - control.workflows.validate
+      - control.workflows.create
+      - control.workflows.activate
+    patch:
+      - control.docs.get
+      - control.workflows.list
+      - control.workflows.describe
+      - control.registry.details
+      - control.workflows.validate
+      - control.workflows.patch
+      - control.workflows.activate
+    export:
+      - control.docs.get
+      - control.workflows.describe
+      - control.tools.list_exports
+      - control.tools.ensure_export
+      - control.workflows.validate
+      - control.workflows.activate
+    delete:
+      - control.workflows.describe
+      - control.workflows.delete
+
+retry_policy:
+  timeout_or_5xx:
+    retryable: true
+    max_attempts: 3
+    backoff: exponential
+    initial_delay_ms: 250
+  validation_or_schema:
+    retryable: false
+    action: patch_payload
+  auth_or_workspace_mismatch:
+    retryable: false
+    action: correct_context
+
+idempotency_policy:
+  mutation_key_template: "{workspace_id}:{intent}:{workflow_id|workflow_name}:{sha256(payload)}"
+  duplicate_mutation_behavior: return_last_success_or_conflict
+
+output_contract:
+  required_fields:
+    - operations_executed
+    - final_state
+    - validation_summary
+    - unresolved_risks
+  final_state_required_fields:
+    - workflow_id
+    - version
+    - status
+  operation_entry_required_fields:
+    - step
+    - tool
+    - result
+    - duration_ms
+  error_output_required_fields:
+    - failing_operation
+    - error_code
+    - error_message
+    - next_action
+
+observability:
+  required_metrics:
+    - total_operations
+    - total_duration_ms
+    - retry_count
+    - mutation_count
+  required_audit_fields:
+    - workspace_id
+    - workflow_id
+    - intent
+    - tool_sequence

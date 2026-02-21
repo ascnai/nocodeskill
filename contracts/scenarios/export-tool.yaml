@@ -1,0 +1,26 @@
+id: export-workflow-tool
+version: 1.0.0
+description: Ensure an existing workflow is exported as MCP tool and active.
+
+inputs:
+  intent: export
+  workspace_id: "<uuid>"
+  workflow_id: "<uuid>"
+  export_tool: Market
+  export_handler: HourlyAnalytics
+
+expected_calls:
+  - control.docs.get
+  - control.workflows.describe
+  - control.tools.list_exports
+  - control.tools.ensure_export
+  - control.workflows.validate
+  - control.workflows.activate
+
+expected_outcome:
+  status: success
+  required_output_fields:
+    - operations_executed
+    - final_state.workflow_id
+    - final_state.status
+    - unresolved_risks

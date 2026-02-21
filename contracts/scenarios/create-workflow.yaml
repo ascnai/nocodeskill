@@ -1,0 +1,24 @@
+id: create-workflow-linear
+version: 1.0.0
+description: Create and activate a new linear workflow with deterministic graph edges.
+
+inputs:
+  intent: create
+  workspace_id: "<uuid>"
+
+expected_calls:
+  - control.docs.get
+  - control.workflows.list
+  - control.registry.list
+  - control.registry.details
+  - control.workflows.validate
+  - control.workflows.create
+  - control.workflows.activate
+
+expected_outcome:
+  status: success
+  required_output_fields:
+    - operations_executed
+    - final_state.workflow_id
+    - final_state.status
+    - validation_summary

@@ -1,0 +1,25 @@
+id: repair-invalid-workflow
+version: 1.0.0
+description: Repair an existing workflow with graph/reference validation failures.
+
+inputs:
+  intent: repair
+  workspace_id: "<uuid>"
+  workflow_id: "<uuid>"
+
+expected_calls:
+  - control.docs.get
+  - control.workflows.list
+  - control.workflows.describe
+  - control.registry.details
+  - control.workflows.validate
+  - control.workflows.patch
+  - control.workflows.activate
+
+expected_outcome:
+  status: success
+  required_output_fields:
+    - operations_executed
+    - final_state.workflow_id
+    - final_state.version
+    - validation_summary

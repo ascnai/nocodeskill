@@ -1,7 +1,7 @@
 interface:
   display_name: "MCP Control Operator"
-  short_description: "Build and operate ASCN workflows via MCP control tools."
-  default_prompt: "Use $mcp-control-operator to create or repair a workflow through control.* tools with strict validation before activation."
+  short_description: "Deterministic workflow lifecycle and export control via MCP control tools."
+  default_prompt: "Use $mcp-control-operator. Follow the exact intent flow, validate before mutation, and return contract-compliant output."
 
 dependencies:
   tools:
@@ -12,4 +12,11 @@ dependencies:
       url: "/v1/workspaces/{workspace_id}/mcp"
 
 policy:
-  allow_implicit_invocation: true
+  allow_implicit_invocation: false
+  require_workspace_id: true
+  fail_on_missing_tools: true
+  require_validation_before_mutation: true
+
+contracts:
+  skill_contract: "../contracts/skill-contract.yaml"
+  error_taxonomy: "../contracts/error-taxonomy.yaml"
