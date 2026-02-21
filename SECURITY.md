@@ -10,6 +10,8 @@ This skill is intended for product validation and controlled environments.
 - Operators MUST not include plaintext credentials in workflow payloads.
 - Operators MUST use workspace secrets references (`={{ $secrets.<name> }}`) for sensitive values.
 - Operators MUST include mutation intent and affected workflow identifiers in every completion summary.
+- Operators MUST stop and return MCP connection instructions when gateway dependency is missing/unreachable.
+- Operators MUST avoid improvised one-off handlers when capability is missing; propose reusable integration path with explicit user approval.
 
 ## Disclosure
 

@@ -22,6 +22,32 @@ Use this table with `contracts/error-taxonomy.yaml`.
 | duplicate export name | E_EXPORT_CANONICAL_NAME_CONFLICT | export_conflict | list exports, reconcile tool/handler |
 | export outputPath invalid | E_EXPORT_INVALID_OUTPUT_PATH | export_conflict | patch output path, validate, activate |
 | timeout / 5xx | E_TRANSIENT_TIMEOUT / E_TRANSIENT_UPSTREAM_5XX | transient | retry with bounded backoff |
+| MCP gateway not connected | E_DEPENDENCY_MCP_NOT_CONNECTED | dependency | provide user connection runbook and stop |
+| required control tool missing | E_DEPENDENCY_REQUIRED_TOOL_MISSING | dependency | reconnect MCP and verify tool surface |
+| missing handler/trigger for requested flow | E_CAPABILITY_MISSING_HANDLER / E_CAPABILITY_MISSING_TRIGGER | capability_gap | propose reusable integration options and request user decision |
+
+## MCP Not Connected: User Instruction Runbook
+
+Provide this exact checklist to user:
+
+1. Ensure ASCN API base URL is reachable.
+2. Configure MCP connection:
+   - transport: `streamable_http`
+   - url: `{base_url}/v1/workspaces/{workspace_id}/mcp`
+3. Add auth header if environment requires it: `Authorization: Bearer <token>`.
+4. Reconnect MCP client/session.
+5. Retry and verify control tools are visible.
+
+User-facing template:
+
+```text
+MCP control gateway is not connected for workspace {workspace_id}.
+Please configure:
+- transport: streamable_http
+- url: {base_url}/v1/workspaces/{workspace_id}/mcp
+- Authorization: Bearer <token> (if required)
+Reconnect MCP and retry.
+```
 
 ## Repair Sequence
 
@@ -48,3 +74,5 @@ Stop and return failure summary when:
 2. workspace/workflow context cannot be resolved
 3. validation errors persist after attempted patching
 4. destructive action lacks explicit confirmation
+5. MCP gateway dependency is unavailable
+6. capability gap exists and user has not selected integration path

@@ -16,7 +16,40 @@ policy:
   require_workspace_id: true
   fail_on_missing_tools: true
   require_validation_before_mutation: true
+  on_dependency_failure: "return_mcp_connection_instructions"
+  on_capability_gap: "propose_reusable_integration_and_request_decision"
 
 contracts:
   skill_contract: "../contracts/skill-contract.yaml"
   error_taxonomy: "../contracts/error-taxonomy.yaml"
+  integration_proposal_schema: "../contracts/integration-proposal-schema.yaml"
+
+playbooks:
+  mcp_not_connected:
+    reference: "../references/troubleshooting.md#mcp-not-connected-user-instruction-runbook"
+    user_message_template: |
+      MCP control gateway is not connected for workspace {workspace_id}.
+      Please configure:
+      - transport: streamable_http
+      - url: {base_url}/v1/workspaces/{workspace_id}/mcp
+      - Authorization: Bearer <token> (if required)
+      Reconnect MCP and retry.
+  capability_gap:
+    reference: "../references/integration-proposals.md"
+    user_message_template: |
+      Required capability is missing for this request ({gap_type}).
+      I can proceed with one of these options:
+      1) compose with existing handlers/tools
+      2) connect external MCP tool
+      3) build a new reusable integration ({proposed_handler_id})
+      Please select one path.
+    option_templates:
+      compose_existing_handlers_or_tools: |
+        I can deliver this with existing platform capabilities.
+        This is the fastest path and avoids new integration build.
+      connect_external_mcp_tool: |
+        I can connect an external MCP tool and reuse it for this workflow.
+        This avoids internal implementation if external capability already exists.
+      build_new_reusable_integration: |
+        I propose a reusable integration {proposed_handler_id} with typed schema and acceptance tests.
+        This is best for repeated usage across automations.

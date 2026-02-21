@@ -1,5 +1,5 @@
 id: create-workflow-linear
-version: 1.0.0
+version: 1.2.1
 description: Create and activate a new linear workflow with deterministic graph edges.
 
 inputs:

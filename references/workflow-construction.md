@@ -4,9 +4,11 @@ Use this reference with `contracts/skill-contract.yaml`.
 
 ## Pre-Authoring
 
+0. Confirm MCP gateway dependency is connected for this workspace.
 1. Run `control.workflows.list` to detect existing candidates.
 2. Run `control.workflows.describe` for any workflow you may patch.
 3. Run `control.registry.details` for every planned handler.
+4. If required capability is missing, switch to `references/integration-proposals.md`.
 
 ## Deterministic Graph Checklist
 

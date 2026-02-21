@@ -1,10 +1,15 @@
 skill_name: mcp-control-operator
-version: 1.0.0
+version: 1.2.1
 owner: platform-ai
 maturity: beta
 
 compatibility:
   protocol: mcp
+  gateway_dependency:
+    id: workspace-mcp-gateway
+    transport: streamable_http
+    url_template: "{base_url}/v1/workspaces/{workspace_id}/mcp"
+    auth_header_optional: "Authorization: Bearer <token>"
   required_tools:
     - control.docs.get
     - control.registry.list
@@ -29,6 +34,7 @@ input_contract:
     - export_tool
     - export_handler
     - required_secrets
+    - integration_preferences
   validation:
     workspace_id: uuid
     intent:
@@ -44,6 +50,30 @@ execution_policy:
   deterministic: true
   validate_before_mutation: true
   requires_explicit_delete_confirm: true
+  dependency_handshake:
+    required: true
+    checks:
+      - workspace_id_present
+      - mcp_gateway_dependency_present
+      - control_tool_surface_available
+  capability_gap_detection:
+    required: true
+    detection_order:
+      - inspect_existing_workflows_and_exports
+      - inspect_registry_handlers_and_triggers
+      - classify_capability_status
+    status_values:
+      - sufficient
+      - missing_handler
+      - missing_trigger
+      - missing_auth_capability
+      - schema_or_contract_gap
+    reuse_first_priority:
+      - compose_existing_handlers_or_tools
+      - reuse_existing_exported_tool
+      - connect_external_mcp_tool
+      - implement_new_reusable_integration
+    require_user_decision_before_mutation: true
   call_sequences:
     create:
       - control.docs.get
@@ -84,6 +114,9 @@ retry_policy:
   auth_or_workspace_mismatch:
     retryable: false
     action: correct_context
+  dependency_missing_or_unreachable:
+    retryable: false
+    action: provide_connection_instructions_and_stop
 
 idempotency_policy:
   mutation_key_template: "{workspace_id}:{intent}:{workflow_id|workflow_name}:{sha256(payload)}"
@@ -109,6 +142,16 @@ output_contract:
     - error_code
     - error_message
     - next_action
+  conditional_fields:
+    dependency_failures:
+      - connection_instructions
+      - reconnect_checklist
+    capability_gap:
+      - gap_summary
+      - integration_proposals
+      - decision_options
+      - selected_option_required_for_mutations
+      - decision_message
 
 observability:
   required_metrics:
@@ -121,3 +164,43 @@ observability:
     - workflow_id
     - intent
     - tool_sequence
+
+dependency_recovery:
+  error_codes:
+    - E_DEPENDENCY_MCP_NOT_CONNECTED
+    - E_DEPENDENCY_REQUIRED_TOOL_MISSING
+  user_instruction_template: |
+    MCP control gateway is not connected for workspace {workspace_id}.
+    Please configure MCP connection:
+    - transport: streamable_http
+    - url: {base_url}/v1/workspaces/{workspace_id}/mcp
+    - auth header: Authorization: Bearer <token> (if required)
+    Reconnect MCP and retry.
+  reconnect_checklist:
+    - verify_base_url_reachable
+    - configure_workspace_gateway_url
+    - add_auth_header_if_required
+    - reconnect_client_session
+    - verify_control_tools_available
+
+capability_gap_recovery:
+  error_codes:
+    - E_CAPABILITY_MISSING_HANDLER
+    - E_CAPABILITY_MISSING_TRIGGER
+    - E_CAPABILITY_MISSING_AUTH
+    - E_CAPABILITY_SCHEMA_GAP
+  integration_proposal_schema_ref: "./integration-proposal-schema.yaml"
+  decision_options:
+    - compose_existing_handlers_or_tools
+    - connect_external_mcp_tool
+    - build_new_reusable_integration
+  decision_message_templates:
+    compose_existing_handlers_or_tools: |
+      I can complete this with existing platform capabilities.
+      Plan: compose handlers/tools, validate, activate.
+    connect_external_mcp_tool: |
+      I can connect an external MCP tool and reuse it here.
+      Plan: connect tool, verify schema/auth, wire and validate workflow.
+    build_new_reusable_integration: |
+      Current capabilities are insufficient; I propose reusable integration {proposed_handler_id}.
+      Plan: define schema, implement reusable component, validate with acceptance tests.

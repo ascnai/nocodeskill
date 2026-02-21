@@ -1,0 +1,21 @@
+id: dependency-mcp-not-connected
+version: 1.2.1
+description: Skill loaded but workspace MCP gateway is not connected; agent must return connection instructions and stop mutations.
+
+inputs:
+  intent: create
+  workspace_id: "<uuid>"
+  gateway_connected: false
+
+expected_calls: []
+
+expected_outcome:
+  status: dependency_failure
+  required_output_fields:
+    - failing_operation
+    - error_code
+    - error_message
+    - next_action
+    - connection_instructions
+    - reconnect_checklist
+  expected_error_code: E_DEPENDENCY_MCP_NOT_CONNECTED

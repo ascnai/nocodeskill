@@ -1,0 +1,68 @@
+name: integration_proposal_card
+version: 1.2.1
+type: object
+required:
+  - integration_name
+  - kind
+  - proposed_handler_id
+  - why_reusable
+  - params_schema
+  - returns_schema
+  - required_secrets
+  - auth_model
+  - retry_policy
+  - acceptance_tests
+  - reusability_scope
+properties:
+  integration_name:
+    type: string
+    minLength: 3
+  kind:
+    type: string
+    enum:
+      - activity
+      - trigger
+      - mcp_tool
+  proposed_handler_id:
+    type: string
+    minLength: 3
+  why_reusable:
+    type: string
+    minLength: 8
+  params_schema:
+    type: object
+    additionalProperties: true
+  returns_schema:
+    type: object
+    additionalProperties: true
+  required_secrets:
+    type: array
+    items:
+      type: string
+  auth_model:
+    type: string
+  retry_policy:
+    type: object
+    required:
+      - max_attempts
+      - backoff
+    properties:
+      max_attempts:
+        type: integer
+        minimum: 1
+      backoff:
+        type: string
+  rate_limit_hint:
+    type: string
+  acceptance_tests:
+    type: array
+    minItems: 1
+    items:
+      type: string
+  reusability_scope:
+    type: string
+    enum:
+      - single-workflow
+      - multi-workflow
+      - cross-workspace
+additionalProperties: false

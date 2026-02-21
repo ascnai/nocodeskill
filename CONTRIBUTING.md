@@ -16,6 +16,9 @@ Changes in this repo are contract-sensitive. Treat `SKILL.md` and `contracts/` a
 - Keep call order deterministic and explicit.
 - Do not introduce ambiguous error handling; map to `contracts/error-taxonomy.yaml`.
 - Avoid prose-only requirements when a contract field can encode them.
+- Keep dependency-failure guidance current: if MCP is disconnected, agent must return connection instructions instead of attempting mutations.
+- Keep capability-gap guidance current: if required capability is missing, agent must propose reusable integration options and request explicit user choice.
+- Keep user-facing decision templates synchronized across `SKILL.md`, contracts, and `agents/openai.yaml`.
 
 ## Review Checklist
 

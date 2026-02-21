@@ -23,14 +23,41 @@ This repo defines and governs the `mcp-control-operator` skill used by agents to
 - `SKILL.md`: normative operator specification
 - `contracts/skill-contract.yaml`: input/output/execution contract
 - `contracts/error-taxonomy.yaml`: canonical error classes and actions
+- `contracts/integration-proposal-schema.yaml`: schema for reusable integration proposals
 - `contracts/scenarios/*.yaml`: golden behavior scenarios
-- `references/`: implementation and troubleshooting references
+- `references/`: implementation, troubleshooting, and connection references
 - `agents/openai.yaml`: agent wiring for this skill
 
 ## Compatibility
 
 - Skill contract version: `1.x`
 - Requires workspace MCP gateway exposing control tools documented in `SKILL.md`
+
+## MCP Connection Prerequisite
+
+If the skill is present but MCP is not connected, agents must stop mutations and return connection steps to user.
+
+Connection shape:
+
+1. transport: `streamable_http`
+2. URL: `{base_url}/v1/workspaces/{workspace_id}/mcp`
+3. dependency id: `workspace-mcp-gateway`
+4. auth header (if required): `Authorization: Bearer <token>`
+
+## Capability Gap Strategy
+
+When required handler/trigger/tool capability is missing, agent must:
+
+1. classify the gap type,
+2. propose reuse-first options,
+3. provide reusable Integration Proposal Card(s),
+4. wait for explicit user decision before lifecycle mutations.
+
+Decision responses are standardized with templates for:
+
+1. composing existing capabilities,
+2. connecting external MCP tool,
+3. building new reusable integration.
 
 ## Release Policy
 
