@@ -1,0 +1,15 @@
+interface:
+  display_name: "MCP Control Operator"
+  short_description: "Build and operate ASCN workflows via MCP control tools."
+  default_prompt: "Use $mcp-control-operator to create or repair a workflow through control.* tools with strict validation before activation."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "workspace-mcp-gateway"
+      description: "Workspace MCP gateway exposing control.* tools and exported tools."
+      transport: "streamable_http"
+      url: "/v1/workspaces/{workspace_id}/mcp"
+
+policy:
+  allow_implicit_invocation: true
