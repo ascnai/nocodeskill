@@ -8,6 +8,7 @@ Use this table with `contracts/error-taxonomy.yaml`.
 2. Confirm workspace consistency across all calls.
 3. Confirm target workflow belongs to workspace.
 4. Confirm validation result before activation.
+5. For runtime failures, inspect latest workflow runs via `control.runs.list`.
 
 ## Error Mapping
 
@@ -25,6 +26,13 @@ Use this table with `contracts/error-taxonomy.yaml`.
 | MCP gateway not connected | E_DEPENDENCY_MCP_NOT_CONNECTED | dependency | provide user connection runbook and stop |
 | required control tool missing | E_DEPENDENCY_REQUIRED_TOOL_MISSING | dependency | reconnect MCP and verify tool surface |
 | missing handler/trigger for requested flow | E_CAPABILITY_MISSING_HANDLER / E_CAPABILITY_MISSING_TRIGGER | capability_gap | propose reusable integration options and request user decision |
+
+## Runtime Failure Trace Sequence
+
+1. Capture `run_id` / `trace_id` from tool response when available.
+2. Call `control.runs.list` for the target workflow.
+3. Inspect latest `FAILED` run entries and `trigger_meta.trace_id`.
+4. Report failure summary with `run_id`, `trace_id`, and next fix action.
 
 ## MCP Not Connected: User Instruction Runbook
 

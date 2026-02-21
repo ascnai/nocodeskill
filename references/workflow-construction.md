@@ -27,12 +27,39 @@ Use this reference with `contracts/skill-contract.yaml`.
 4. Secrets use `={{ $secrets.secret_name }}` only.
 5. Never embed plaintext credentials in params.
 
+## Node Reference Quick Examples
+
+Use these exact patterns:
+
+1. Current input field:
+   - `={{ $json.user_id }}`
+2. Upstream node full payload:
+   - `={{ $node['fetch_user'].json }}`
+3. Upstream node field:
+   - `={{ $node['fetch_user'].json.email }}`
+4. Upstream array item:
+   - `={{ $node['list_orders'].json.items[0].id }}`
+
+Avoid raw directives without expression wrapper:
+
+- bad: `$node['fetch_user'].json.email`
+- good: `={{ $node['fetch_user'].json.email }}`
+
 ## Validation Loop
 
 1. `control.workflows.validate`
 2. Patch payload for each reported issue.
 3. Re-run `control.workflows.validate` until `valid=true`.
 4. Apply mutation (`create`/`patch`) and `activate`.
+
+## Post-Export Verification
+
+For workflows exported as MCP tools:
+
+1. invoke exported tool with minimal valid payload.
+2. call `control.runs.list` for target `workflow_id`.
+3. verify latest run status and capture `trace_id` from `trigger_meta`.
+4. if failed, report `run_id`, `trace_id`, and failure summary before further mutations.
 
 ## Minimal Deterministic Example
 

@@ -16,6 +16,8 @@ policy:
   require_workspace_id: true
   fail_on_missing_tools: true
   require_validation_before_mutation: true
+  require_post_export_smoke_trace: true
+  require_explicit_node_reference_syntax: true
   on_dependency_failure: "return_mcp_connection_instructions"
   on_capability_gap: "propose_reusable_integration_and_request_decision"
 
@@ -53,3 +55,8 @@ playbooks:
       build_new_reusable_integration: |
         I propose a reusable integration {proposed_handler_id} with typed schema and acceptance tests.
         This is best for repeated usage across automations.
+  runtime_failure_trace:
+    reference: "../references/workflow-construction.md"
+    user_message_template: |
+      Workflow run failed after tool invocation.
+      I will inspect latest runs via control.runs.list and report run_id + trace_id for diagnostics.

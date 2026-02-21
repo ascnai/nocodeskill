@@ -2,6 +2,38 @@
 
 All notable changes to this repository are documented here.
 
+## [1.3.1] - 2026-02-21
+
+### Added
+
+- Explicit node-reference syntax guidance with concrete examples:
+  - `={{ $json.field }}`
+  - `={{ $node['id'].json.field }}`
+  - `={{ $secrets.secret_name }}`
+- Contract-level `data_reference_policy` in `contracts/skill-contract.yaml`.
+- Quick reference examples in `references/workflow-construction.md`.
+
+### Changed
+
+- `SKILL.md` now has a dedicated required section for node-reference syntax and anti-patterns.
+
+## [1.3.0] - 2026-02-21
+
+### Added
+
+- Required post-export testability flow:
+  - smoke invoke exported tool
+  - inspect latest runs with `control.runs.list`
+- Runtime failure output requirements for `run_trace` and latest run diagnostics.
+- Audit requirement for `trace_id` in skill contract observability section.
+
+### Changed
+
+- `SKILL.md` now requires `control.runs.list` in tool surface.
+- `SKILL.md` export intent flow now includes smoke-test and run-trace verification.
+- `contracts/skill-contract.yaml` upgraded to `1.3.0` with new required tool and export verification sequence.
+- `README.md` now documents runtime traceability expectations.
+
 ## [1.2.1] - 2026-02-21
 
 ### Added

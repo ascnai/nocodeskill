@@ -9,6 +9,7 @@ This repo defines and governs the `mcp-control-operator` skill used by agents to
 - discover workflow and handler metadata
 - validate and mutate workflow configurations
 - manage workflow activation and MCP tool exports
+- verify exported tool runtime behavior through workflow run history
 - produce auditable, deterministic execution summaries
 
 ## Standards Profile
@@ -58,6 +59,24 @@ Decision responses are standardized with templates for:
 1. composing existing capabilities,
 2. connecting external MCP tool,
 3. building new reusable integration.
+
+## Runtime Traceability
+
+For exported MCP tools, agents must:
+
+1. perform a smoke invocation,
+2. inspect latest workflow runs via `control.runs.list`,
+3. include `run_id` and `trace_id` in failure summaries when execution fails.
+
+## Data Reference Syntax
+
+Agent authoring must use explicit expression wrappers:
+
+1. current input: `={{ $json.field }}`
+2. upstream node: `={{ $node['id'].json.field }}`
+3. secrets: `={{ $secrets.secret_name }}`
+
+Raw `$node[...]` and `$json...` strings without `={{ ... }}` are treated as invalid directives in strict validation paths.
 
 ## Release Policy
 

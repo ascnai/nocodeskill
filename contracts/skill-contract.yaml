@@ -1,5 +1,5 @@
 skill_name: mcp-control-operator
-version: 1.2.1
+version: 1.3.1
 owner: platform-ai
 maturity: beta
 
@@ -23,6 +23,7 @@ compatibility:
     - control.workflows.delete
     - control.tools.list_exports
     - control.tools.ensure_export
+    - control.runs.list
 
 input_contract:
   required_fields:
@@ -50,6 +51,18 @@ execution_policy:
   deterministic: true
   validate_before_mutation: true
   requires_explicit_delete_confirm: true
+  data_reference_policy:
+    required: true
+    current_input:
+      - "={{ $json }}"
+      - "={{ $json.field }}"
+    upstream_input:
+      - "={{ $node['id'].json }}"
+      - "={{ $node['id'].json.field }}"
+    secret_input:
+      - "={{ $secrets.secret_name }}"
+    forbid_raw_directives: true
+    require_graph_reachability_for_node_refs: true
   dependency_handshake:
     required: true
     checks:
@@ -98,6 +111,8 @@ execution_policy:
       - control.tools.ensure_export
       - control.workflows.validate
       - control.workflows.activate
+      - invoke_exported_tool_smoke
+      - control.runs.list
     delete:
       - control.workflows.describe
       - control.workflows.delete
@@ -152,6 +167,9 @@ output_contract:
       - decision_options
       - selected_option_required_for_mutations
       - decision_message
+    runtime_failures:
+      - run_trace
+      - latest_runs
 
 observability:
   required_metrics:
@@ -164,6 +182,7 @@ observability:
     - workflow_id
     - intent
     - tool_sequence
+    - trace_id
 
 dependency_recovery:
   error_codes:

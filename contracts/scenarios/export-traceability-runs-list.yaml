@@ -1,0 +1,39 @@
+id: export-traceability-runs-list
+version: 1.3.0
+description: After exporting and invoking MCP tool, agent must inspect latest workflow runs for traceability.
+
+inputs:
+  workspace_id: "<uuid>"
+  intent: export
+  workflow_id: "<uuid>"
+
+preconditions:
+  required_tools:
+    - control.docs.get
+    - control.workflows.describe
+    - control.tools.list_exports
+    - control.tools.ensure_export
+    - control.workflows.validate
+    - control.workflows.activate
+    - control.runs.list
+
+expected_flow:
+  - control.docs.get
+  - control.workflows.describe
+  - control.tools.list_exports
+  - control.tools.ensure_export
+  - control.workflows.validate
+  - control.workflows.activate
+  - invoke_exported_tool_smoke
+  - control.runs.list
+
+expected_output:
+  status: success
+  required_fields:
+    - operations_executed
+    - final_state
+    - validation_summary
+  traceability_fields:
+    - latest_runs
+    - run_id
+    - trace_id

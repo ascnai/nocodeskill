@@ -1,6 +1,6 @@
 ---
 name: mcp-control-operator
-version: 1.2.1
+version: 1.3.1
 owner: platform-ai
 maturity: beta
 description: Deterministic workflow lifecycle and tool-export operator for ASCN workspace MCP control tools.
@@ -45,6 +45,7 @@ The target gateway MUST expose these tools:
 10. `control.workflows.delete`
 11. `control.tools.list_exports`
 12. `control.tools.ensure_export`
+13. `control.runs.list`
 
 If required tools are unavailable, the operator MUST fail fast with a dependency error summary.
 
@@ -97,6 +98,7 @@ If status is not `sufficient`, the operator MUST NOT invent handler/trigger name
 3. The operator MUST mutate by `workflow_id`, never inferred names.
 4. The operator MUST not perform delete without explicit `confirm=true`.
 5. The operator MUST run `control.workflows.activate` after successful create/patch/export.
+6. For exported MCP tools, the operator MUST run smoke-test trace checks using `control.runs.list`.
 
 ### Intent Flows
 
@@ -128,6 +130,8 @@ If status is not `sufficient`, the operator MUST NOT invent handler/trigger name
 4. `control.tools.ensure_export`
 5. `control.workflows.validate`
 6. `control.workflows.activate`
+7. invoke exported tool with minimal valid payload
+8. `control.runs.list` for latest run verification
 
 `delete`
 
@@ -150,6 +154,15 @@ When capability is insufficient, operator MUST run this branch:
 
 The operator MUST pause lifecycle mutations until user selects a path.
 
+## Post-Export Testability and Traceability
+
+After export and activation, operator MUST validate runtime behavior:
+
+1. invoke exported MCP tool with minimal valid payload
+2. query latest runs via `control.runs.list`
+3. confirm latest run status is expected (`COMPLETED` for happy-path smoke)
+4. if run fails, include `run_id` and `trace_id` in failure summary
+
 ## Idempotency and Retry
 
 1. Mutation operations MUST use a deterministic operation key: 
@@ -168,6 +181,24 @@ The operator MUST pause lifecycle mutations until user selects a path.
 6. Dynamic expressions and secrets MUST use `={{ ... }}`.
 7. Credentials MUST NOT be hardcoded.
 8. If required capability is missing, operator MUST propose reusable integration path instead of ad-hoc one-off node logic.
+
+## Node Reference Syntax (Required)
+
+The operator MUST explicitly use and communicate these patterns when authoring workflow params:
+
+1. Current node input:
+   - `={{ $json }}`
+   - `={{ $json.field }}`
+2. Upstream node output:
+   - `={{ $node['build'].json }}`
+   - `={{ $node['build'].json.message }}`
+3. Upstream array/object access:
+   - `={{ $node['fetch'].json.items[0].id }}`
+4. Secrets:
+   - `={{ $secrets.telegram_bot_token }}`
+
+The operator MUST NOT use raw `$node[...]` or raw `$json...` strings without `={{ ... }}` in dynamic fields.
+If a node reference is used, graph reachability MUST be validated (`A -> ... -> B`).
 
 ## Error Handling Standard
 
@@ -217,6 +248,7 @@ On failure, output MUST include:
 4. `next_action`
 5. `connection_instructions` when error class is `dependency`
 6. `integration_proposals` when class is `capability_gap`
+7. `run_trace` (`run_id`, `trace_id`) when runtime execution started
 
 ## Integration Proposal Card
 
