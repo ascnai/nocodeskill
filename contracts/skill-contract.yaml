@@ -1,5 +1,5 @@
-skill_name: mcp-control-operator
-version: 1.4.0
+skill_name: ASCN operator
+version: 1.5.0
 owner: platform-ai
 maturity: beta
 
@@ -8,8 +8,9 @@ compatibility:
   gateway_dependency:
     id: workspace-mcp-gateway
     transport: streamable_http
-    url_template: "{base_url}/v1/workspaces/{workspace_id}/mcp"
-    auth_header_optional: "Authorization: Bearer <token>"
+    url_template: "http://dev-nocode.ascn.ai/mcp"
+    token_secret_name: "mcp_gateway_token"
+    auth_header_required: "Authorization: Bearer <token>"
   required_tools:
     - control.docs.get
     - control.registry.list
@@ -69,6 +70,7 @@ execution_policy:
     checks:
       - workspace_id_present
       - mcp_gateway_dependency_present
+      - mcp_gateway_token_secret_present
       - control_tool_surface_available
   capability_gap_detection:
     required: true
@@ -195,13 +197,15 @@ dependency_recovery:
     MCP control gateway is not connected for workspace {workspace_id}.
     Please configure MCP connection:
     - transport: streamable_http
-    - url: {base_url}/v1/workspaces/{workspace_id}/mcp
-    - auth header: Authorization: Bearer <token> (if required)
+    - url: http://dev-nocode.ascn.ai/mcp
+    - workspace secret: mcp_gateway_token = <token>
+    - auth header: Authorization: Bearer <token>
     Reconnect MCP and retry.
   reconnect_checklist:
     - verify_base_url_reachable
     - configure_workspace_gateway_url
-    - add_auth_header_if_required
+    - ensure_mcp_gateway_token_secret_present
+    - add_auth_header_with_same_token
     - reconnect_client_session
     - verify_control_tools_available
 

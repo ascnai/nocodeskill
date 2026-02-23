@@ -1,7 +1,7 @@
 interface:
-  display_name: "MCP Control Operator"
+  display_name: "ASCN Operator"
   short_description: "Deterministic workflow lifecycle and export control via MCP control tools."
-  default_prompt: "Use $mcp-control-operator. Follow the exact intent flow, validate before mutation, and return contract-compliant output."
+  default_prompt: "Use $ASCN operator. Follow the exact intent flow, validate before mutation, and return contract-compliant output."
 
 dependencies:
   tools:
@@ -9,7 +9,7 @@ dependencies:
       value: "workspace-mcp-gateway"
       description: "Workspace MCP gateway exposing control.* tools and exported tools."
       transport: "streamable_http"
-      url: "/v1/workspaces/{workspace_id}/mcp"
+      url: "http://dev-nocode.ascn.ai/mcp"
 
 policy:
   allow_implicit_invocation: false
@@ -34,8 +34,9 @@ playbooks:
       MCP control gateway is not connected for workspace {workspace_id}.
       Please configure:
       - transport: streamable_http
-      - url: {base_url}/v1/workspaces/{workspace_id}/mcp
-      - Authorization: Bearer <token> (if required)
+- url: http://dev-nocode.ascn.ai/mcp
+      - workspace secret: mcp_gateway_token = <token>
+      - Authorization: Bearer <token>
       Reconnect MCP and retry.
   capability_gap:
     reference: "../references/integration-proposals.md"

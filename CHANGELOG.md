@@ -2,6 +2,18 @@
 
 All notable changes to this repository are documented here.
 
+## [1.5.0] - 2026-02-22
+
+### Added
+
+- Token bootstrap guidance via workspace secret `mcp_gateway_token`.
+- Contract-level dependency check `mcp_gateway_token_secret_present`.
+
+### Changed
+
+- MCP control gateway URL standardized to `{base_url}/mcp` across skill, contracts, and references.
+- Dependency recovery now requires bearer token to match `mcp_gateway_token` secret value.
+
 ## [1.4.0] - 2026-02-21
 
 ### Added

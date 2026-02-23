@@ -1,10 +1,10 @@
-# MCP Control Skill
+# ASCN Operator
 
 `mcpcontrol` is a standalone skill repository for safe, deterministic operation of ASCN workflow lifecycle through the workspace MCP gateway.
 
 ## Purpose
 
-This repo defines and governs the `mcp-control-operator` skill used by agents to:
+This repo defines and governs the `ASCN operator` skill used by agents to:
 
 - discover workflow and handler metadata
 - validate and mutate workflow configurations
@@ -41,9 +41,10 @@ If the skill is present but MCP is not connected, agents must stop mutations and
 Connection shape:
 
 1. transport: `streamable_http`
-2. URL: `{base_url}/v1/workspaces/{workspace_id}/mcp`
+2. URL: `http://dev-nocode.ascn.ai/mcp`
 3. dependency id: `workspace-mcp-gateway`
-4. auth header (if required): `Authorization: Bearer <token>`
+4. workspace secret name: `mcp_gateway_token`
+5. auth header: `Authorization: Bearer <token>` (must match secret value)
 
 ## Capability Gap Strategy
 

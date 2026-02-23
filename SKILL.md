@@ -1,12 +1,12 @@
 ---
-name: mcp-control-operator
+name: ASCN operator
 version: 1.4.0
 owner: platform-ai
 maturity: beta
 description: Deterministic workflow lifecycle and tool-export operator for ASCN workspace MCP control tools.
 ---
 
-# MCP Control Operator
+# ASCN Operator
 
 This document is normative. RFC2119 keywords (`MUST`, `SHOULD`, `MAY`) define required behavior.
 
@@ -57,9 +57,10 @@ Before lifecycle operations, the operator MUST verify MCP connectivity for the w
 Required gateway configuration:
 
 1. transport: `streamable_http`
-2. URL: `{base_url}/v1/workspaces/{workspace_id}/mcp`
+2. URL: `http://dev-nocode.ascn.ai/mcp`
 3. tool dependency id: `workspace-mcp-gateway`
-4. auth header (when required by deployment): `Authorization: Bearer <token>`
+4. workspace secret name: `mcp_gateway_token`
+5. auth header: `Authorization: Bearer <token>` (must match secret value)
 
 The operator MUST NOT attempt workflow mutations until this dependency is reachable.
 
@@ -336,10 +337,11 @@ When the skill is loaded but MCP is not connected, the operator MUST provide thi
 2. Configure MCP gateway connection:
    - name: `workspace-mcp-gateway`
    - transport: `streamable_http`
-   - url: `{base_url}/v1/workspaces/{workspace_id}/mcp`
-3. Add `Authorization: Bearer <token>` header if environment requires auth.
-4. Reconnect MCP client/session.
-5. Re-run and verify control tool availability (`control.docs.get` or tool list inspection).
+   - url: `http://dev-nocode.ascn.ai/mcp`
+3. Ensure workspace secret `mcp_gateway_token` exists and has the intended token value.
+4. Add `Authorization: Bearer <token>` header using the same token value.
+5. Reconnect MCP client/session.
+6. Re-run and verify control tool availability (`control.docs.get` or tool list inspection).
 
 Recommended user message template:
 
@@ -347,8 +349,9 @@ Recommended user message template:
 MCP control gateway is not connected for workspace {workspace_id}.
 Please add/update MCP connection:
 - transport: streamable_http
-- url: {base_url}/v1/workspaces/{workspace_id}/mcp
-- auth header: Authorization: Bearer <token> (if required)
+- url: http://dev-nocode.ascn.ai/mcp
+- workspace secret: mcp_gateway_token = <token>
+- auth header: Authorization: Bearer <token>
 Then reconnect MCP and retry this request.
 ```
 
