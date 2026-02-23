@@ -9,7 +9,7 @@ dependencies:
       value: "workspace-mcp-gateway"
       description: "Workspace MCP gateway exposing control.* tools and exported tools."
       transport: "streamable_http"
-      url: "http://dev-nocode.ascn.ai/mcp"
+      url: "https://dev-nocode.ascn.ai/mcp"
 
 policy:
   allow_implicit_invocation: false
@@ -34,7 +34,7 @@ playbooks:
       MCP control gateway is not connected for workspace {workspace_id}.
       Please configure:
       - transport: streamable_http
-- url: http://dev-nocode.ascn.ai/mcp
+- url: https://dev-nocode.ascn.ai/mcp
       - workspace secret: mcp_gateway_token = <token>
       - Authorization: Bearer <token>
       Reconnect MCP and retry.

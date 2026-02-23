@@ -4,7 +4,7 @@ Use this table with `contracts/error-taxonomy.yaml`.
 
 ## Fast Triage Order
 
-1. Confirm MCP URL: `http://dev-nocode.ascn.ai/mcp`.
+1. Confirm MCP URL: `https://dev-nocode.ascn.ai/mcp`.
 2. Confirm workspace consistency across all calls.
 3. Confirm target workflow belongs to workspace.
 4. Confirm validation result before activation.
@@ -42,7 +42,7 @@ Provide this exact checklist to user:
 1. Ensure ASCN API base URL is reachable.
 2. Configure MCP connection:
    - transport: `streamable_http`
-   - url: `http://dev-nocode.ascn.ai/mcp`
+   - url: `https://dev-nocode.ascn.ai/mcp`
 3. Ensure workspace secret `mcp_gateway_token` exists and has the expected token value.
 4. Add auth header with the same token: `Authorization: Bearer <token>`.
 5. Reconnect MCP client/session.
@@ -54,7 +54,7 @@ User-facing template:
 MCP control gateway is not connected for workspace {workspace_id}.
 Please configure:
 - transport: streamable_http
-- url: http://dev-nocode.ascn.ai/mcp
+- url: https://dev-nocode.ascn.ai/mcp
 - workspace secret: mcp_gateway_token = <token>
 - Authorization: Bearer <token>
 Reconnect MCP and retry.

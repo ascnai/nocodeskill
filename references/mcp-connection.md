@@ -7,19 +7,19 @@ Use this when skill is installed but MCP control tools are unavailable.
 Connect agent runtime to ASCN workspace MCP gateway:
 
 - transport: `streamable_http`
-- url: `http://dev-nocode.ascn.ai/mcp`
+- url: `https://dev-nocode.ascn.ai/mcp`
 - dependency id: `workspace-mcp-gateway`
 
 ## Required Inputs
 
-1. ASCN API URL: `http://dev-nocode.ascn.ai/mcp`
+1. ASCN API URL: `https://dev-nocode.ascn.ai/mcp`
 2. `workspace_id` (UUID)
 3. workspace secret name `mcp_gateway_token`
 4. access token (must match secret value)
 
 ## Verification Steps
 
-1. Resolve final URL: `http://dev-nocode.ascn.ai/mcp`.
+1. Resolve final URL: `https://dev-nocode.ascn.ai/mcp`.
 2. Configure MCP transport as `streamable_http`.
 3. Create/update workspace secret `mcp_gateway_token` with target token.
 4. Add header `Authorization: Bearer <token>` using the same value.

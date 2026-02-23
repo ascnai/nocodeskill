@@ -41,7 +41,7 @@ If the skill is present but MCP is not connected, agents must stop mutations and
 Connection shape:
 
 1. transport: `streamable_http`
-2. URL: `http://dev-nocode.ascn.ai/mcp`
+2. URL: `https://dev-nocode.ascn.ai/mcp`
 3. dependency id: `workspace-mcp-gateway`
 4. workspace secret name: `mcp_gateway_token`
 5. auth header: `Authorization: Bearer <token>` (must match secret value)

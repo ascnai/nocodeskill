@@ -57,7 +57,7 @@ Before lifecycle operations, the operator MUST verify MCP connectivity for the w
 Required gateway configuration:
 
 1. transport: `streamable_http`
-2. URL: `http://dev-nocode.ascn.ai/mcp`
+2. URL: `https://dev-nocode.ascn.ai/mcp`
 3. tool dependency id: `workspace-mcp-gateway`
 4. workspace secret name: `mcp_gateway_token`
 5. auth header: `Authorization: Bearer <token>` (must match secret value)
@@ -337,7 +337,7 @@ When the skill is loaded but MCP is not connected, the operator MUST provide thi
 2. Configure MCP gateway connection:
    - name: `workspace-mcp-gateway`
    - transport: `streamable_http`
-   - url: `http://dev-nocode.ascn.ai/mcp`
+   - url: `https://dev-nocode.ascn.ai/mcp`
 3. Ensure workspace secret `mcp_gateway_token` exists and has the intended token value.
 4. Add `Authorization: Bearer <token>` header using the same token value.
 5. Reconnect MCP client/session.
@@ -349,7 +349,7 @@ Recommended user message template:
 MCP control gateway is not connected for workspace {workspace_id}.
 Please add/update MCP connection:
 - transport: streamable_http
-- url: http://dev-nocode.ascn.ai/mcp
+- url: https://dev-nocode.ascn.ai/mcp
 - workspace secret: mcp_gateway_token = <token>
 - auth header: Authorization: Bearer <token>
 Then reconnect MCP and retry this request.
