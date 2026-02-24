@@ -1,6 +1,6 @@
 id: export-traceability-runs-list
-version: 0.0.1
-description: After exporting and invoking MCP tool, agent must inspect latest workflow runs for traceability.
+version: 0.0.2
+description: After exporting and invoking MCP tool, agent must inspect latest workflow runs for run checks.
 
 inputs:
   workspace_id: "<uuid>"

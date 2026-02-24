@@ -1,5 +1,5 @@
 id: publish-workspace-plugin
-version: 0.0.1
+version: 0.0.2
 description: Submit a workspace user plugin bundle and return user-category visibility state.
 
 inputs:
@@ -7,8 +7,8 @@ inputs:
   workspace_id: "<uuid>"
   plugin_name: CustomerOps
   handlers:
-    - HttpRequest.Request
-    - Json.Parse
+    - User.FetchCustomer
+    - User.UpsertCustomer
 
 expected_calls:
   - control.docs.get

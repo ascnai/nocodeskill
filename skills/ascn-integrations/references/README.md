@@ -1,6 +1,6 @@
 # ASCN Integrations References
 
-Deterministic companion references for `ascn-integrations`.
+References for `ascn-integrations`.
 
 ## Minimal Checklists
 

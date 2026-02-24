@@ -1,5 +1,5 @@
-skill_name: ASCN operator
-version: 0.0.1
+skill_name: ascn-operator
+version: 0.0.2
 owner: platform-ai
 maturity: beta
 
@@ -57,6 +57,12 @@ input_contract:
         - publish_plugin
         - delete
         - explain
+    publish_plugin_handlers:
+      required_for_intent: publish_plugin
+      pattern: "^User\\.[A-Za-z0-9_]+$"
+      reject_examples:
+        - Telegram.SendMessage
+        - HttpRequest.Request
 
 execution_policy:
   deterministic: true

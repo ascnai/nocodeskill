@@ -14,7 +14,7 @@ Use this table with `contracts/error-taxonomy.yaml`.
 
 | Symptom | Taxonomy Code | Class | Action |
 |---|---|---|---|
-| invalid activity type | E_VALIDATION_UNKNOWN_ACTIVITY_TYPE | validation | use canonical handler from registry list/details |
+| invalid activity type | E_VALIDATION_UNKNOWN_ACTIVITY_TYPE | validation | use handler ID from registry list/details |
 | edge points to unknown node | E_VALIDATION_UNKNOWN_EDGE_TARGET | validation | fix `edges[].to` or add node |
 | not reachable | E_VALIDATION_REACHABILITY | validation | add directed path between nodes |
 | unsupported directive | E_VALIDATION_UNSUPPORTED_DIRECTIVE | validation | wrap with `={{ ... }}` |

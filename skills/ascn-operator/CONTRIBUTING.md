@@ -12,8 +12,8 @@ Changes in this repo are contract-sensitive. Treat `SKILL.md` and `contracts/` a
 
 ## Authoring Rules
 
-- Use RFC2119 keywords for normative behavior.
-- Keep call order deterministic and explicit.
+- Use RFC2119 keywords for required behavior.
+- Keep call order clear and explicit.
 - Do not introduce ambiguous error handling; map to `contracts/error-taxonomy.yaml`.
 - Avoid prose-only requirements when a contract field can encode them.
 - Keep dependency-failure guidance current: if MCP is disconnected, agent must return connection instructions instead of attempting mutations.
@@ -25,5 +25,5 @@ Changes in this repo are contract-sensitive. Treat `SKILL.md` and `contracts/` a
 - Does this change alter required inputs?
 - Does this change alter tool call order?
 - Does this change alter output contract fields?
-- Are retry/stop conditions still deterministic?
+- Are retry/stop conditions still clear?
 - Are examples and scenarios still valid?

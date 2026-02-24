@@ -1,6 +1,6 @@
 # ASCN Integrations
 
-`ascn-integrations` defines deterministic guidance for building missing ASCN capability and packaging it as reusable plugins.
+`ascn-integrations` defines clear guidance for building missing ASCN capability and packaging it as reusable plugins.
 
 ## Scope
 
@@ -10,6 +10,6 @@
 - `params_ui` UX standards including conditional fields
 - plugin packaging via control MCP plugin endpoints
 
-## Companion Usage
+## Usage With ascn-operator
 
 This skill is invoked by `ascn-operator` whenever capability gaps are detected.

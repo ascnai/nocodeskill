@@ -21,8 +21,8 @@ Publishing is user-facing:
 
 ## Submission Flow (Workspace Side)
 
-1. collect `workspace_id`, `plugin_name`, and canonical handler IDs
-2. call `control.registry.details` for every handler to confirm canonical IDs and schemas
+1. collect `workspace_id`, `plugin_name`, and handler IDs
+2. call `control.registry.details` for every handler to confirm IDs and schemas
 3. build plugin definition payload
 4. call `control.plugins.create_plugin`
 5. if edits are needed, call `control.plugins.update_plugin`
@@ -35,7 +35,7 @@ Publishing is user-facing:
 Required:
 
 1. `plugin_name` (string)
-2. `handlers` (array of canonical handler IDs)
+2. `handlers` (array of handler IDs matching `User.<Handler>`)
 
 Optional:
 
@@ -72,8 +72,8 @@ Optional:
   },
   "tags": ["internal", "customer", "ops"],
   "handlers": [
-    { "handler_name": "HttpRequest.Request" },
-    { "handler_name": "Json.Parse" }
+    { "handler_name": "User.FetchCustomer" },
+    { "handler_name": "User.UpsertCustomer" }
   ]
 }
 ```
@@ -84,39 +84,40 @@ For each `handlers[]` item, provide localized UX metadata and `params_ui`:
 
 ```json
 {
-  "handler_name": "HttpRequest.Request",
-  "ui_name": { "en": "HTTP Request", "ru": "HTTP запрос" },
+  "handler_name": "User.FetchCustomer",
+  "ui_name": { "en": "Fetch Customer", "ru": "Получить клиента" },
   "ui_description": {
-    "en": "Send an HTTP request to external service.",
-    "ru": "Отправляет HTTP запрос во внешний сервис."
+    "en": "Fetch customer profile by external ID.",
+    "ru": "Получает профиль клиента по внешнему ID."
   },
   "ui_description_full": {
-    "en": "Use for calling external APIs with explicit method, URL, headers, and timeout.",
-    "ru": "Используйте для вызова внешних API с явными параметрами method, URL, headers и timeout."
+    "en": "Uses workflow-backed integration and returns normalized customer fields for downstream steps.",
+    "ru": "Использует workflow-backed интеграцию и возвращает нормализованные поля клиента для следующих шагов."
   },
   "params_ui": [
     {
-      "key": "method",
-      "control": "options",
-      "label": { "en": "Method", "ru": "Метод" },
-      "hint": { "en": "HTTP method", "ru": "HTTP метод" },
-      "options": [
-        { "value": "GET", "label": { "en": "GET", "ru": "GET" } },
-        { "value": "POST", "label": { "en": "POST", "ru": "POST" } }
-      ]
+      "key": "customer_id",
+      "control": "string",
+      "label": { "en": "Customer ID", "ru": "ID клиента" },
+      "hint": { "en": "External customer identifier", "ru": "Внешний идентификатор клиента" }
     },
     {
-      "key": "url",
+      "key": "include_contacts",
       "control": "string",
-      "label": { "en": "URL", "ru": "URL" },
+      "label": { "en": "Include Contacts", "ru": "Включать контакты" },
       "hint": {
-        "en": "Absolute URL. Keep secrets in headers via workspace secrets.",
-        "ru": "Абсолютный URL. Секреты храните в headers через secrets."
+        "en": "true/false flag for contact expansion.",
+        "ru": "Флаг true/false для расширения контактных данных."
       }
     }
   ]
 }
 ```
+
+Validation rule:
+
+1. `control.plugins.create_plugin` and `control.plugins.update_plugin` accept only user-defined handlers in `User.<Handler>` format.
+2. Reject non-user handlers (for example `Telegram.SendMessage`, `HttpRequest.Request`).
 
 Params UI quality rules:
 

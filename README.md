@@ -6,7 +6,7 @@ Multi-skill repository for [ascn.ai](https://ascn.ai)
 
 - Keep each skill isolated and versioned.
 - Make skills easy to discover, validate, and package.
-- Keep normative behavior contract-first and testable.
+- Keep required behavior contract-first and testable.
 
 ## Repository Layout
 
@@ -34,8 +34,8 @@ Example tree:
 
 Current skills:
 
-- `ascn-operator`: deterministic workflow lifecycle and tool export operator for ASCN workspace MCP control tools.
-- `ascn-integrations`: deterministic guide for designing missing capability and packaging it into user-visible plugins.
+- `ascn-operator`: workflow and tool export operator for ASCN workspace MCP control tools.
+- `ascn-integrations`: guide for designing missing capability and packaging it into user plugins.
 
 ## Working With Skills
 
@@ -43,10 +43,13 @@ Current skills:
 2. Fill `SKILL.md`, `contracts/`, and `agents/openai.yaml`.
 3. Add scenario files under `contracts/scenarios/`.
 4. Register the skill in `.claude-plugin/skills.json`.
-5. Update this README catalog.
+5. Register the skill in `skills/index.yaml`.
+6. Update this README catalog.
+7. Run `./scripts/validate-skills.sh`.
 
 ## Compatibility
 
 - Skill folder convention: `skills/<skill-id>/`
 - Each skill must include: `SKILL.md`, `README.md`, `VERSION`, `CHANGELOG.md`, `contracts/`, `references/`, `agents/`
-- Skill docs should use RFC2119 keywords for normative behavior.
+- Skill docs should use RFC2119 keywords for required behavior.
+- Validation gate: `./scripts/validate-skills.sh`

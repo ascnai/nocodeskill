@@ -10,7 +10,7 @@ Use this reference with `contracts/skill-contract.yaml`.
 3. Run `control.registry.details` for every planned handler.
 4. If required capability is missing, switch to `references/integration-proposals.md`.
 
-## Deterministic Graph Checklist
+## Graph Checklist
 
 1. Include `name`, `version`, `activities`.
 2. Ensure all activity IDs are unique.
@@ -72,7 +72,7 @@ For workflows exported as MCP tools:
 4. verify latest run status, output nodes, and capture `trace_id` from `trigger_meta`.
 5. if failed, report `run_id`, `trace_id`, and node-level failure summary before further mutations.
 
-## Minimal Deterministic Example
+## Minimal Example
 
 ```json
 {

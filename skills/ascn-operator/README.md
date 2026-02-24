@@ -1,6 +1,6 @@
 # ASCN Operator
 
-`ascn-operator` is a skill in the `mcpcontrol` multi-skill repository for safe and reliable ASCN workflow lifecycle operations through the workspace MCP gateway.
+`ascn-operator` is a skill in the `mcpcontrol` multi-skill repository for safe and reliable ASCN workflow operations through the workspace MCP gateway.
 
 ## Purpose
 
@@ -11,20 +11,20 @@ This repo defines and governs the `ASCN operator` skill used by agents to:
 - manage workflow activation and MCP tool exports
 - submit user plugin bundles for user-category plugin usage and testing
 - verify exported tool runtime behavior through workflow run history
-- produce clear and auditable execution summaries
+- produce clear execution summaries
 
 ## Standards Profile
 
 - Contract-first: machine-readable contracts in `contracts/`
 - Clear execution model: explicit call order and retry classes
-- RFC2119 language (`MUST`, `SHOULD`, `MAY`) in normative docs
+- RFC2119 language (`MUST`, `SHOULD`, `MAY`) in required docs
 - Change control: semantic versioning + changelog
 
 ## Repository Layout
 
-- `SKILL.md`: normative operator specification
+- `SKILL.md`: operator specification
 - `contracts/skill-contract.yaml`: input/output/execution contract
-- `contracts/error-taxonomy.yaml`: canonical error classes and actions
+- `contracts/error-taxonomy.yaml`: error classes and actions
 - `contracts/integration-proposal-schema.yaml`: schema for reusable integration proposals
 - `contracts/scenarios/*.yaml`: golden behavior scenarios
 - `references/`: implementation, troubleshooting, and connection references
@@ -32,7 +32,7 @@ This repo defines and governs the `ASCN operator` skill used by agents to:
 
 ## Compatibility
 
-- Skill contract version: `0.0.1`
+- Skill contract version: `0.0.2`
 - Requires workspace MCP gateway exposing control tools documented in `SKILL.md`
 - Includes plugin submission tools:
   - `control.plugins.create_plugin`
@@ -60,13 +60,13 @@ When required handler/trigger/tool capability is missing, agent must:
 3. provide reusable Integration Proposal Card(s),
 4. wait for explicit user decision before lifecycle mutations.
 
-Decision responses are standardized with templates for:
+Decision responses use templates for:
 
 1. composing existing capabilities,
 2. connecting external MCP tool,
 3. building new reusable integration.
 
-## Runtime Traceability
+## Runtime Run Checks
 
 For exported MCP tools, agents must:
 

@@ -1,7 +1,7 @@
 interface:
   display_name: "ASCN Integrations"
-  short_description: "Deterministic integration design and plugin packaging flow."
-  default_prompt: "Use $ASCN integrations. Follow deterministic reuse-first integration delivery and plugin packaging rules."
+  short_description: "Integration design and plugin packaging flow."
+  default_prompt: "Use $ASCN integrations. Follow reuse-first integration delivery and plugin packaging rules."
 
 dependencies:
   tools:

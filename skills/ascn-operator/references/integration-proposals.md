@@ -76,7 +76,7 @@ I propose a reusable integration `{proposed_handler_id}` with typed schema and a
 Proceed with building this reusable integration?
 ```
 
-## Canonical User Responses
+## User Response Templates
 
 Use these full responses when presenting options to users. Keep placeholders and structure.
 
