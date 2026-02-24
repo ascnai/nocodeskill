@@ -1,0 +1,25 @@
+id: missing-capability-propose-integration
+version: 0.0.1
+description: Required capability does not exist; agent must propose reusable integration options and request user decision.
+
+inputs:
+  intent: create
+  workspace_id: "<uuid>"
+  capability_status: missing_handler
+
+expected_calls:
+  - control.docs.get
+  - control.workflows.list
+  - control.registry.list
+  - control.registry.details
+
+expected_outcome:
+  status: capability_gap
+  required_output_fields:
+    - gap_summary
+    - integration_proposals
+    - decision_options
+    - decision_message
+    - next_action
+    - selected_option_required_for_mutations
+  expected_error_code: E_CAPABILITY_MISSING_HANDLER

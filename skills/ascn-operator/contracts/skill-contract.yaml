@@ -1,0 +1,313 @@
+skill_name: ASCN operator
+version: 0.0.1
+owner: platform-ai
+maturity: beta
+
+compatibility:
+  protocol: mcp
+  gateway_dependency:
+    id: workspace-mcp-gateway
+    transport: streamable_http
+    url_template: "https://nocode.ascn.ai/mcp"
+    token_secret_name: "mcp_gateway_token"
+    auth_header_required: "Authorization: Bearer <token>"
+    token_source_url: "https://ascn.ai/no-code/mcp-list"
+  required_tools:
+    - control.docs.get
+    - control.registry.list
+    - control.registry.details
+    - control.workflows.list
+    - control.workflows.describe
+    - control.workflows.validate
+    - control.workflows.create
+    - control.workflows.patch
+    - control.workflows.activate
+    - control.workflows.delete
+    - control.tools.list_exports
+    - control.tools.ensure_export
+    - control.runs.list
+    - control.runs.details
+    - control.plugins.create_plugin
+    - control.plugins.update_plugin
+    - control.plugins.list
+
+input_contract:
+  required_fields:
+    - workspace_id
+    - intent
+  optional_fields:
+    - workflow_id
+    - workflow_name
+    - export_tool
+    - export_handler
+    - required_secrets
+    - integration_preferences
+    - blueprint_preference
+    - latency_slo_ms
+    - throughput_rps
+    - idempotency_requirement
+  validation:
+    workspace_id: uuid
+    intent:
+      enum:
+        - create
+        - repair
+        - patch
+        - export
+        - publish_plugin
+        - delete
+        - explain
+
+execution_policy:
+  deterministic: true
+  validate_before_mutation: true
+  requires_explicit_delete_confirm: true
+  blueprint_selector:
+    required: true
+    allowed:
+      - linear
+      - fanout
+      - conditional
+      - retryable_http
+      - tool_export
+    require_output_field: selected_blueprint
+  minimal_first_draft:
+    required: true
+    description: Build smallest runnable draft before expanding scope.
+  schema_lock:
+    required: true
+    source_tool: control.registry.details
+    required_fields:
+      - required_params
+      - default_params
+      - secret_backed_params
+  reference_safety_gate:
+    required: true
+    checks:
+      - all_node_refs_reachable
+      - no_raw_dynamic_directives
+      - no_secret_literals
+  edge_intent_annotations:
+    required: true
+    allowed:
+      - sequence
+      - branch_true
+      - branch_false
+      - error_path
+  export_robustness:
+    required: true
+    checks:
+      - list_exports_include_non_mcp
+      - canonical_output_path
+      - output_path_resolves_to_output_node
+      - canonical_name_conflict_check
+  naming_convention:
+    required: true
+    activity_id_pattern: "<verb>_<domain>_<seq>"
+    trigger_id_pattern: "<kind>_<seq>"
+    workflow_name_pattern: "<domain>_<intent>_<variant>"
+    id_case: lowercase_snake_case
+  data_reference_policy:
+    required: true
+    current_input:
+      - "={{ $json }}"
+      - "={{ $json.field }}"
+    upstream_input:
+      - "={{ $node['id'].json }}"
+      - "={{ $node['id'].json.field }}"
+    secret_input:
+      - "={{ $secrets.secret_name }}"
+    forbid_raw_directives: true
+    require_graph_reachability_for_node_refs: true
+  dependency_handshake:
+    required: true
+    checks:
+      - workspace_id_present
+      - mcp_gateway_dependency_present
+      - mcp_gateway_token_secret_present
+      - control_tool_surface_available
+  capability_gap_detection:
+    required: true
+    detection_order:
+      - inspect_existing_workflows_and_exports
+      - inspect_registry_handlers_and_triggers
+      - classify_capability_status
+    status_values:
+      - sufficient
+      - missing_handler
+      - missing_trigger
+      - missing_auth_capability
+      - schema_or_contract_gap
+    reuse_first_priority:
+      - compose_existing_handlers_or_tools
+      - reuse_existing_exported_tool
+      - connect_external_mcp_tool
+      - implement_new_reusable_integration
+    require_user_decision_before_mutation: true
+  call_sequences:
+    create:
+      - control.docs.get
+      - control.workflows.list
+      - control.registry.list
+      - control.registry.details
+      - select_blueprint
+      - build_schema_lock
+      - build_minimal_valid_draft
+      - run_reference_safety_gate
+      - control.workflows.validate
+      - control.workflows.create
+      - control.workflows.activate
+    patch:
+      - control.docs.get
+      - control.workflows.list
+      - control.workflows.describe
+      - control.registry.details
+      - select_blueprint
+      - build_schema_lock
+      - build_minimal_valid_draft
+      - run_reference_safety_gate
+      - control.workflows.validate
+      - control.workflows.patch
+      - control.workflows.activate
+    export:
+      - control.docs.get
+      - control.workflows.describe
+      - control.tools.list_exports_expose_mcp_only_false
+      - control.tools.list_exports
+      - control.tools.ensure_export
+      - control.workflows.validate
+      - control.workflows.activate
+      - invoke_exported_tool_smoke
+      - control.runs.list
+      - control.runs.details
+    publish_plugin:
+      - control.docs.get
+      - control.registry.details
+      - control.plugins.create_plugin
+      - control.plugins.update_plugin
+      - control.plugins.list
+    delete:
+      - control.workflows.describe
+      - control.workflows.delete
+
+retry_policy:
+  timeout_or_5xx:
+    retryable: true
+    max_attempts: 3
+    backoff: exponential
+    initial_delay_ms: 250
+  validation_or_schema:
+    retryable: false
+    action: patch_payload
+  auth_or_workspace_mismatch:
+    retryable: false
+    action: correct_context
+  dependency_missing_or_unreachable:
+    retryable: false
+    action: provide_connection_instructions_and_stop
+
+idempotency_policy:
+  mutation_key_template: "{workspace_id}:{intent}:{workflow_id|workflow_name}:{sha256(payload)}"
+  duplicate_mutation_behavior: return_last_success_or_conflict
+
+output_contract:
+  required_fields:
+    - operations_executed
+    - final_state
+    - validation_summary
+    - unresolved_risks
+  final_state_required_fields:
+    - workflow_id
+    - version
+    - status
+  operation_entry_required_fields:
+    - step
+    - tool
+    - result
+    - duration_ms
+  error_output_required_fields:
+    - failing_operation
+    - error_code
+    - error_message
+    - next_action
+  conditional_fields:
+    dependency_failures:
+      - connection_instructions
+      - reconnect_checklist
+    capability_gap:
+      - gap_summary
+      - integration_proposals
+      - decision_options
+      - selected_option_required_for_mutations
+      - decision_message
+    runtime_failures:
+      - run_trace
+      - latest_runs
+      - run_details
+      - patch_strategy
+    publish_plugin:
+      - definition_id
+      - plugin_name
+      - handlers
+      - visibility_state
+      - next_action
+    create_patch_repair_export:
+      - selected_blueprint
+      - schema_lock_summary
+      - edge_intents
+
+observability:
+  required_metrics:
+    - total_operations
+    - total_duration_ms
+    - retry_count
+    - mutation_count
+  required_audit_fields:
+    - workspace_id
+    - workflow_id
+    - intent
+    - tool_sequence
+    - trace_id
+
+dependency_recovery:
+  error_codes:
+    - E_DEPENDENCY_MCP_NOT_CONNECTED
+    - E_DEPENDENCY_REQUIRED_TOOL_MISSING
+  user_instruction_template: |
+    MCP control gateway is not connected for workspace {workspace_id}.
+    Please configure MCP connection:
+    - transport: streamable_http
+    - url: https://nocode.ascn.ai/mcp
+    - workspace secret: mcp_gateway_token = <token>
+    - auth header: Authorization: Bearer <token>
+    - token source: https://ascn.ai/no-code/mcp-list
+    Reconnect MCP and retry.
+  reconnect_checklist:
+    - verify_base_url_reachable
+    - configure_workspace_gateway_url
+    - ensure_mcp_gateway_token_secret_present
+    - add_auth_header_with_same_token
+    - reconnect_client_session
+    - verify_control_tools_available
+
+capability_gap_recovery:
+  error_codes:
+    - E_CAPABILITY_MISSING_HANDLER
+    - E_CAPABILITY_MISSING_TRIGGER
+    - E_CAPABILITY_MISSING_AUTH
+    - E_CAPABILITY_SCHEMA_GAP
+  integration_proposal_schema_ref: "./integration-proposal-schema.yaml"
+  decision_options:
+    - compose_existing_handlers_or_tools
+    - connect_external_mcp_tool
+    - build_new_reusable_integration
+  decision_message_templates:
+    compose_existing_handlers_or_tools: |
+      I can complete this with existing platform capabilities.
+      Plan: compose handlers/tools, validate, activate.
+    connect_external_mcp_tool: |
+      I can connect an external MCP tool and reuse it here.
+      Plan: connect tool, verify schema/auth, wire and validate workflow.
+    build_new_reusable_integration: |
+      Current capabilities are insufficient; I propose reusable integration {proposed_handler_id}.
+      Plan: define schema, implement reusable component, validate with acceptance tests.

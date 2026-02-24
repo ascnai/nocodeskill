@@ -1,0 +1,68 @@
+skill_name: ASCN integrations
+version: 0.0.1
+owner: platform-ai
+maturity: beta
+
+compatibility:
+  protocol: mcp
+  required_tools:
+    - control.docs.get
+    - control.registry.list
+    - control.registry.details
+    - control.workflows.list
+    - control.workflows.describe
+    - control.workflows.validate
+    - control.workflows.create
+    - control.workflows.patch
+    - control.workflows.activate
+    - control.tools.ensure_export
+    - control.tools.list_exports
+    - control.plugins.create_plugin
+    - control.plugins.update_plugin
+    - control.plugins.list
+
+input_contract:
+  required_fields:
+    - workspace_id
+    - capability_gap_summary
+    - target_use_cases
+    - expected_contract
+  optional_fields:
+    - auth_requirements
+    - publish_target
+
+execution_policy:
+  deterministic: true
+  require_reuse_first: true
+  require_validation_before_activation: true
+  call_sequence:
+    - control.registry.list
+    - control.registry.details
+    - control.tools.list_exports
+    - draft_contract
+    - choose_delivery_mode
+    - implement_integration
+    - control.workflows.validate
+    - control.workflows.activate
+    - control.tools.ensure_export
+    - control.plugins.create_plugin
+    - control.plugins.update_plugin
+    - control.plugins.list
+
+output_contract:
+  required_fields:
+    - integration
+    - plugin
+    - verification
+    - open_items
+  integration_required_fields:
+    - mode
+    - capability_status
+    - handler_names
+  plugin_required_fields:
+    - plugin_name
+    - created_or_updated
+  verification_required_fields:
+    - validated
+    - activated
+    - visible_in_plugins_list

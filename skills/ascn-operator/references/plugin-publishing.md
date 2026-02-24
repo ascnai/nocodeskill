@@ -1,0 +1,149 @@
+# Plugin Publishing Reference
+
+Use this reference when a user asks to package handlers into a user plugin for direct user-facing plugin usage.
+
+## Scope
+
+This flow publishes **plugin definitions** (handler bundles), not new handler code.
+
+Publishing is user-facing:
+
+1. submit in workspace via MCP control tool
+2. unwrapped `Trigger.Tool` exports are shown as flat `User.<Handler>` entries in user category
+3. wrapped handlers (published into plugin) are shown as first-class plugin cards/forms in user category
+4. user tests plugin as a plugin card/form flow (not raw handlers)
+
+## Required MCP Tools
+
+1. `control.plugins.create_plugin`
+2. `control.plugins.update_plugin`
+3. `control.plugins.list`
+
+## Submission Flow (Workspace Side)
+
+1. collect `workspace_id`, `plugin_name`, and canonical handler IDs
+2. call `control.registry.details` for every handler to confirm canonical IDs and schemas
+3. build plugin definition payload
+4. call `control.plugins.create_plugin`
+5. if edits are needed, call `control.plugins.update_plugin`
+6. verify plugin visibility in `user` category (`control.plugins.list`) and provide test steps
+
+## Control Tool Shapes
+
+`control.plugins.create_plugin`
+
+Required:
+
+1. `plugin_name` (string)
+2. `handlers` (array of canonical handler IDs)
+
+Optional:
+
+1. `definition` (JSON object merged into plugin payload)
+
+`control.plugins.update_plugin`
+
+Required:
+
+1. `definition_id`
+
+Optional:
+
+1. `handlers` (replaces `definition.handlers`)
+2. `definition` (JSON patch merge)
+
+## Definition Structure (Recommended)
+
+```json
+{
+  "origin": "user",
+  "category": "tool",
+  "name": {
+    "en": "Customer Ops",
+    "ru": "Операции клиентов"
+  },
+  "description": {
+    "en": "Internal customer operations toolkit",
+    "ru": "Внутренний набор операций с клиентами"
+  },
+  "description_full": {
+    "en": "Bundle of customer lifecycle handlers used by support and risk workflows.",
+    "ru": "Пакет обработчиков жизненного цикла клиента для процессов поддержки и риска."
+  },
+  "tags": ["internal", "customer", "ops"],
+  "handlers": [
+    { "handler_name": "HttpRequest.Request" },
+    { "handler_name": "Json.Parse" }
+  ]
+}
+```
+
+## Handler-Level Params UI (Best Practices)
+
+For each `handlers[]` item, provide localized UX metadata and `params_ui`:
+
+```json
+{
+  "handler_name": "HttpRequest.Request",
+  "ui_name": { "en": "HTTP Request", "ru": "HTTP запрос" },
+  "ui_description": {
+    "en": "Send an HTTP request to external service.",
+    "ru": "Отправляет HTTP запрос во внешний сервис."
+  },
+  "ui_description_full": {
+    "en": "Use for calling external APIs with explicit method, URL, headers, and timeout.",
+    "ru": "Используйте для вызова внешних API с явными параметрами method, URL, headers и timeout."
+  },
+  "params_ui": [
+    {
+      "key": "method",
+      "control": "options",
+      "label": { "en": "Method", "ru": "Метод" },
+      "hint": { "en": "HTTP method", "ru": "HTTP метод" },
+      "options": [
+        { "value": "GET", "label": { "en": "GET", "ru": "GET" } },
+        { "value": "POST", "label": { "en": "POST", "ru": "POST" } }
+      ]
+    },
+    {
+      "key": "url",
+      "control": "string",
+      "label": { "en": "URL", "ru": "URL" },
+      "hint": {
+        "en": "Absolute URL. Keep secrets in headers via workspace secrets.",
+        "ru": "Абсолютный URL. Секреты храните в headers через secrets."
+      }
+    }
+  ]
+}
+```
+
+Params UI quality rules:
+
+1. every field MUST have stable `key` matching params schema path
+2. every user-facing text SHOULD include `en` and `ru`
+3. use `options` for enums; avoid free-form strings for constrained values
+4. keep labels short; put guidance into `hint`
+5. mark only truly mandatory fields as required
+6. do not expose secrets as plain text defaults
+7. keep ordering consistent with real execution order
+8. avoid duplicated keys and ambiguous names
+9. use `displayOptions.show` only for conditional visibility (not enum option lists)
+
+## Plugin-Level Metadata Best Practices
+
+1. set `origin=user` for workspace-submitted plugins
+2. choose `category` intentionally (`tool`, `logic`, `ai-agent`, `trigger`)
+3. use concise `name.en` and descriptive `description.en`
+4. use `description_full` for operational constraints and expected outputs
+5. add tags for discoverability (team, domain, provider, risk)
+
+## Operator Response Requirements
+
+After submit/update, operator SHOULD return:
+
+1. `definition_id`
+2. `plugin_name`
+3. handler list
+4. explicit note that plugin is expected under `user` category
+5. any Params UI quality warnings detected before submission

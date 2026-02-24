@@ -1,0 +1,6 @@
+{
+  "name": "mcpcontrol",
+  "type": "skills-repository",
+  "schema_version": "1.0",
+  "skills_index": "./skills.json"
+}

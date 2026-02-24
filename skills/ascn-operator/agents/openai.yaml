@@ -1,0 +1,71 @@
+interface:
+  display_name: "ASCN Operator"
+  short_description: "Build and manage workflows safely using MCP control tools."
+  default_prompt: "Use $ASCN operator. Pick a blueprint, build a minimal valid draft, run schema-lock and reference checks, then validate before any mutation. Keep output short and practical."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "workspace-mcp-gateway"
+      description: "Workspace MCP gateway exposing control.* tools and exported tools."
+      transport: "streamable_http"
+      url: "https://nocode.ascn.ai/mcp"
+
+policy:
+  allow_implicit_invocation: false
+  require_workspace_id: true
+  fail_on_missing_tools: true
+  require_blueprint_selection: true
+  require_minimal_valid_first_draft: true
+  require_schema_lock_from_registry_details: true
+  require_reference_safety_gate: true
+  require_consistent_naming_convention: true
+  require_export_robustness_checks: true
+  require_validation_before_mutation: true
+  require_post_export_smoke_trace: true
+  require_explicit_node_reference_syntax: true
+  require_run_details_on_failure: true
+  on_dependency_failure: "return_mcp_connection_instructions"
+  on_capability_gap: "propose_reusable_integration_and_request_decision"
+
+contracts:
+  skill_contract: "../contracts/skill-contract.yaml"
+  error_taxonomy: "../contracts/error-taxonomy.yaml"
+  integration_proposal_schema: "../contracts/integration-proposal-schema.yaml"
+
+playbooks:
+  mcp_not_connected:
+    reference: "../references/troubleshooting.md#mcp-not-connected-user-instruction-runbook"
+    user_message_template: |
+      MCP control gateway is not connected for workspace {workspace_id}.
+      Please configure:
+      - transport: streamable_http
+      - url: https://nocode.ascn.ai/mcp
+      - workspace secret: mcp_gateway_token = <token>
+      - Authorization: Bearer <token>
+      - token source: https://ascn.ai/no-code/mcp-list
+      Reconnect MCP and retry.
+  capability_gap:
+    reference: "../references/integration-proposals.md"
+    user_message_template: |
+      Required capability is missing for this request ({gap_type}).
+      I can proceed with one of these options:
+      1) compose with existing handlers/tools
+      2) connect external MCP tool
+      3) build a new reusable integration ({proposed_handler_id})
+      Please select one path.
+    option_templates:
+      compose_existing_handlers_or_tools: |
+        I can deliver this with existing platform capabilities.
+        This is the fastest path and avoids new integration build.
+      connect_external_mcp_tool: |
+        I can connect an external MCP tool and reuse it for this workflow.
+        This avoids internal implementation if external capability already exists.
+      build_new_reusable_integration: |
+        I propose a reusable integration {proposed_handler_id} with typed schema and acceptance tests.
+        This is best for repeated usage across automations.
+  runtime_failure_trace:
+    reference: "../references/workflow-construction.md"
+    user_message_template: |
+      Workflow run failed after tool invocation.
+      I will inspect latest runs via control.runs.list and report run_id + trace_id for diagnostics.

@@ -1,0 +1,33 @@
+id: workflow-backed-plugin-packaging
+version: 0.0.1
+description: Build missing capability using workflow-backed integration and publish as user plugin.
+
+inputs:
+  workspace_id: "<uuid>"
+  capability_gap_summary: "No canonical CRM enrichment handler is available"
+  target_use_cases:
+    - "Enrich lead profile before qualification"
+  expected_contract:
+    handler_name: "CRM.EnrichLead"
+    params_schema:
+      type: object
+    returns_schema:
+      type: object
+
+expected_calls:
+  - control.registry.list
+  - control.registry.details
+  - control.tools.list_exports
+  - control.workflows.validate
+  - control.workflows.activate
+  - control.tools.ensure_export
+  - control.plugins.create_plugin
+  - control.plugins.list
+
+expected_outcome:
+  status: success
+  required_output_fields:
+    - integration
+    - plugin
+    - verification
+    - open_items

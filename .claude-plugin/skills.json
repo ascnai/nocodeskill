@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0",
+  "repository": "mcpcontrol",
+  "skills": [
+    {
+      "id": "ascn-operator",
+      "path": "skills/ascn-operator",
+      "entrypoint": "SKILL.md",
+      "version": "0.0.1",
+      "owner": "platform-ai",
+      "maturity": "beta",
+      "description": "Workflow lifecycle and tool-export operator for ASCN workspace MCP control tools."
+    },
+    {
+      "id": "ascn-integrations",
+      "path": "skills/ascn-integrations",
+      "entrypoint": "SKILL.md",
+      "version": "0.0.1",
+      "owner": "platform-ai",
+      "maturity": "beta",
+      "description": "Guide for creating missing integrations and packaging them into user-visible plugins."
+    }
+  ]
+}

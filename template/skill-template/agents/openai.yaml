@@ -1,0 +1,3 @@
+name: example-skill-openai
+runtime: openai
+instructions_ref: ../SKILL.md

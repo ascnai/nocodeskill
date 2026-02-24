@@ -1,0 +1,4 @@
+name: example-skill
+version: 0.1.0
+required_inputs: []
+output_contract: {}
