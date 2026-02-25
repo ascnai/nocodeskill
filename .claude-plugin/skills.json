@@ -6,7 +6,7 @@
       "id": "ascn-operator",
       "path": "skills/ascn-operator",
       "entrypoint": "SKILL.md",
-      "version": "0.0.2",
+      "version": "0.0.3",
       "owner": "platform-ai",
       "maturity": "beta",
       "description": "Workflow and tool-export operator for ASCN workspace MCP control tools."
@@ -15,7 +15,7 @@
       "id": "ascn-integrations",
       "path": "skills/ascn-integrations",
       "entrypoint": "SKILL.md",
-      "version": "0.0.2",
+      "version": "0.0.3",
       "owner": "platform-ai",
       "maturity": "beta",
       "description": "Guide for designing and delivering new ASCN integrations and packaging them as user plugins."

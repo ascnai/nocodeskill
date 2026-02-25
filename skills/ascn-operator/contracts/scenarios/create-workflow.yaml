@@ -1,5 +1,5 @@
 id: create-workflow-linear
-version: 0.0.2
+version: 0.0.3
 description: Create and activate a new linear workflow with clear graph edges.
 
 inputs:

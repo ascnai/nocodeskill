@@ -146,7 +146,7 @@ Intent call order:
 `publish_plugin`
 1. validate every handler matches `User.<Handler>`; reject system handlers (for example `Telegram.*`)
 2. `control.registry.details` for each handler
-3. when editing `params_ui`, apply conditional patterns and validation checklist from `skills/skills/ascn-integrations/SKILL.md` (`Conditional UI Recipes`, `Conditional UI Validation Checklist`)
+3. when editing `params_ui`, apply conditional patterns and validation checklist from `skills/ascn-integrations/SKILL.md` (`Conditional UI Recipes`, `Conditional UI Validation Checklist`)
 4. `control.plugins.create_plugin`
 5. optional `control.plugins.update_plugin`
 6. `control.plugins.list` verify plugin is visible
