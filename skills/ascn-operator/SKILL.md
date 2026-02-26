@@ -1,6 +1,6 @@
 ---
 name: ascn-operator
-version: 0.0.3
+version: 0.0.4
 owner: platform-ai
 maturity: beta
 description: Workflow and tool-export operator for ASCN workspace MCP control tools.
@@ -52,6 +52,7 @@ At task start, the operator MUST run:
 2. tool discovery check for required surface:
    - `control.registry.list`
    - `control.registry.details`
+   - `control.registry.resolve_options`
    - `control.workflows.list`
    - `control.workflows.describe`
    - `control.workflows.validate`
@@ -64,7 +65,9 @@ At task start, the operator MUST run:
    - `control.runs.list`
    - `control.runs.details`
    - `control.plugins.create_plugin`
+   - `control.plugins.validate_definition`
    - `control.plugins.update_plugin`
+   - `control.plugins.get`
    - `control.plugins.list`
 
 Connectivity defaults (use as hints, not hard requirements):
@@ -115,6 +118,7 @@ Common authoring pipeline:
    - no raw `$...` directive without `={{ ... }}`
    - no secret literals
 5. validate (`control.workflows.validate`)
+   - payload MUST be wrapped as `{ "workflow": { ... } }`
 6. mutate (`create` or `patch`)
 7. activate (`control.workflows.activate`)
 8. expand only when required by scope
@@ -138,6 +142,7 @@ Intent call order:
 2. `control.tools.list_exports` with `expose_mcp_only=false`
 3. `control.tools.ensure_export` (must include `output_path`)
 4. `control.workflows.validate`
+   - payload MUST be wrapped as `{ "workflow": { ... } }`
 5. `control.workflows.activate`
 6. smoke invoke exported tool with minimal payload
 7. `control.runs.list`
@@ -146,10 +151,14 @@ Intent call order:
 `publish_plugin`
 1. validate every handler matches `User.<Handler>`; reject system handlers (for example `Telegram.*`)
 2. `control.registry.details` for each handler
-3. when editing `params_ui`, apply conditional patterns and validation checklist from `skills/ascn-integrations/SKILL.md` (`Conditional UI Recipes`, `Conditional UI Validation Checklist`)
-4. `control.plugins.create_plugin`
-5. optional `control.plugins.update_plugin`
-6. `control.plugins.list` verify plugin is visible
+3. collect existing plugin examples using `control.plugins.list` with `include_definition=true` (never query DB directly)
+4. use `control.plugins.get` for deterministic single-definition reads when a `definition_id` already exists
+5. for fields with `options_source`, resolve via `control.registry.resolve_options`
+6. when editing `params_ui`, apply conditional patterns and validation checklist from `skills/ascn-integrations/SKILL.md` (`Conditional UI Recipes`, `Conditional UI Validation Checklist`)
+7. preflight with `control.plugins.validate_definition`
+8. `control.plugins.create_plugin`
+9. optional `control.plugins.update_plugin`
+10. `control.plugins.list` verify plugin is visible
 
 `delete`
 1. `control.workflows.describe`

@@ -1,5 +1,5 @@
 id: publish-workspace-plugin
-version: 0.0.3
+version: 0.0.4
 description: Submit a workspace user plugin bundle and return user-category visibility state.
 
 inputs:
@@ -13,9 +13,17 @@ inputs:
 expected_calls:
   - control.docs.get
   - control.registry.details
+  - control.plugins.list
+  - control.plugins.validate_definition
   - control.plugins.create_plugin
   - control.plugins.update_plugin
+  - control.plugins.get
   - control.plugins.list
+
+expected_call_params:
+  - tool: control.plugins.list
+    params:
+      include_definition: true
 
 expected_outcome:
   status: success

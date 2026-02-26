@@ -32,11 +32,13 @@ This repo defines and governs the `ASCN operator` skill used by agents to:
 
 ## Compatibility
 
-- Skill contract version: `0.0.2`
+- Skill contract version: `0.0.4`
 - Requires workspace MCP gateway exposing control tools documented in `SKILL.md`
 - Includes plugin submission tools:
   - `control.plugins.create_plugin`
+  - `control.plugins.validate_definition`
   - `control.plugins.update_plugin`
+  - `control.plugins.get`
 
 ## MCP Connection Prerequisite
 

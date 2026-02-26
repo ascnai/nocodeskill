@@ -1,5 +1,5 @@
 skill_name: ascn-integrations
-version: 0.0.3
+version: 0.0.4
 owner: platform-ai
 maturity: beta
 
@@ -9,6 +9,7 @@ compatibility:
     - control.docs.get
     - control.registry.list
     - control.registry.details
+    - control.registry.resolve_options
     - control.workflows.list
     - control.workflows.describe
     - control.workflows.validate
@@ -18,7 +19,9 @@ compatibility:
     - control.tools.ensure_export
     - control.tools.list_exports
     - control.plugins.create_plugin
+    - control.plugins.validate_definition
     - control.plugins.update_plugin
+    - control.plugins.get
     - control.plugins.list
 
 input_contract:
@@ -45,8 +48,10 @@ execution_policy:
     - control.workflows.validate
     - control.workflows.activate
     - control.tools.ensure_export
+    - control.plugins.validate_definition
     - control.plugins.create_plugin
     - control.plugins.update_plugin
+    - control.plugins.get
     - control.plugins.list
 
 output_contract:

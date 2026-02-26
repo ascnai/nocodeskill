@@ -1,5 +1,5 @@
 skill_name: ascn-operator
-version: 0.0.3
+version: 0.0.4
 owner: platform-ai
 maturity: beta
 
@@ -16,6 +16,7 @@ compatibility:
     - control.docs.get
     - control.registry.list
     - control.registry.details
+    - control.registry.resolve_options
     - control.workflows.list
     - control.workflows.describe
     - control.workflows.validate
@@ -28,7 +29,9 @@ compatibility:
     - control.runs.list
     - control.runs.details
     - control.plugins.create_plugin
+    - control.plugins.validate_definition
     - control.plugins.update_plugin
+    - control.plugins.get
     - control.plugins.list
 
 input_contract:
@@ -178,7 +181,6 @@ execution_policy:
     export:
       - control.docs.get
       - control.workflows.describe
-      - control.tools.list_exports_expose_mcp_only_false
       - control.tools.list_exports
       - control.tools.ensure_export
       - control.workflows.validate
@@ -189,12 +191,24 @@ execution_policy:
     publish_plugin:
       - control.docs.get
       - control.registry.details
+      - control.plugins.list
+      - control.plugins.validate_definition
       - control.plugins.create_plugin
       - control.plugins.update_plugin
+      - control.plugins.get
       - control.plugins.list
     delete:
       - control.workflows.describe
       - control.workflows.delete
+  call_sequence_params:
+    export:
+      - tool: control.tools.list_exports
+        params:
+          expose_mcp_only: false
+    publish_plugin:
+      - tool: control.plugins.list
+        params:
+          include_definition: true
 
 retry_policy:
   timeout_or_5xx:

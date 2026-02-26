@@ -16,17 +16,24 @@ Publishing is user-facing:
 ## Required MCP Tools
 
 1. `control.plugins.create_plugin`
-2. `control.plugins.update_plugin`
-3. `control.plugins.list`
+2. `control.plugins.validate_definition`
+3. `control.plugins.update_plugin`
+4. `control.plugins.get`
+5. `control.plugins.list`
+6. `control.registry.resolve_options` (for dynamic `options_source`)
 
 ## Submission Flow (Workspace Side)
 
 1. collect `workspace_id`, `plugin_name`, and handler IDs
 2. call `control.registry.details` for every handler to confirm IDs and schemas
-3. build plugin definition payload
-4. call `control.plugins.create_plugin`
-5. if edits are needed, call `control.plugins.update_plugin`
-6. verify plugin visibility in `user` category (`control.plugins.list`) and provide test steps
+3. call `control.plugins.list` with `include_definition=true` to inspect existing handler `params_ui` examples
+4. build plugin definition payload
+5. for fields with `options_source`, validate values via `control.registry.resolve_options`
+6. run preflight with `control.plugins.validate_definition`
+7. call `control.plugins.create_plugin`
+8. if edits are needed, call `control.plugins.update_plugin`
+9. use `control.plugins.get` for deterministic read-back by `definition_id`
+10. verify plugin visibility in `user` category (`control.plugins.list`) and provide test steps
 
 ## Control Tool Shapes
 
@@ -39,7 +46,8 @@ Required:
 
 Optional:
 
-1. `definition` (JSON object merged into plugin payload)
+1. `plugin_definition` (preferred JSON object merged into plugin payload)
+2. `definition` (legacy alias)
 
 `control.plugins.update_plugin`
 
@@ -50,7 +58,8 @@ Required:
 Optional:
 
 1. `handlers` (replaces `definition.handlers`)
-2. `definition` (JSON patch merge)
+2. `plugin_definition` (preferred JSON patch merge)
+3. `definition` (legacy alias)
 
 ## Definition Structure (Recommended)
 

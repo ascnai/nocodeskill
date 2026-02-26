@@ -1,6 +1,6 @@
 ---
 name: ascn-integrations
-version: 0.0.3
+version: 0.0.4
 owner: platform-ai
 maturity: beta
 description: Guide for designing and delivering new ASCN integrations and packaging them as user plugins.
@@ -40,17 +40,20 @@ If workspace context or contract expectations are missing, stop and return `inpu
 1. `control.docs.get`
 2. `control.registry.list`
 3. `control.registry.details`
-4. `control.workflows.list`
-5. `control.workflows.describe`
-6. `control.workflows.validate`
-7. `control.workflows.create`
-8. `control.workflows.patch`
-9. `control.workflows.activate`
-10. `control.tools.ensure_export`
-11. `control.tools.list_exports`
-12. `control.plugins.create_plugin`
-13. `control.plugins.update_plugin`
-14. `control.plugins.list`
+4. `control.registry.resolve_options`
+5. `control.workflows.list`
+6. `control.workflows.describe`
+7. `control.workflows.validate`
+8. `control.workflows.create`
+9. `control.workflows.patch`
+10. `control.workflows.activate`
+11. `control.tools.ensure_export`
+12. `control.tools.list_exports`
+13. `control.plugins.create_plugin`
+14. `control.plugins.validate_definition`
+15. `control.plugins.update_plugin`
+16. `control.plugins.get`
+17. `control.plugins.list`
 
 If required tools are unavailable, stop and return `dependency_failure`.
 
@@ -82,10 +85,12 @@ Mode decision gate:
 3. Choose delivery mode (`A` or `B`) with explicit reason.
 4. Implement integration.
 5. Validate workflow/config contract (`control.workflows.validate`).
+   - payload MUST be wrapped as `{ "workflow": { ... } }`
 6. Activate export (`control.workflows.activate`, `control.tools.ensure_export`).
-7. Bundle handlers into plugin (`control.plugins.create_plugin` then `update_plugin` if needed).
-8. Verify plugin visibility with `control.plugins.list` and registry views.
-9. Return output contract payload with verification evidence.
+7. Run plugin-definition preflight (`control.plugins.validate_definition`).
+8. Bundle handlers into plugin (`control.plugins.create_plugin` then `update_plugin` if needed).
+9. Verify plugin visibility with `control.plugins.list` and registry views (`control.plugins.get` for deterministic reads).
+10. Return output contract payload with verification evidence.
 
 ## Plugin Packaging Rules
 
@@ -109,6 +114,8 @@ Mode decision gate:
 6. Include safe defaults where predictable behavior is expected.
 7. Use `options` only for selectable values; use `displayOptions.show` only for conditional visibility.
 8. Keep field order identical to the execution mental model (auth -> target -> behavior -> advanced).
+9. For `options_source` fields, resolve options via `control.registry.resolve_options` (never via direct DB queries).
+10. Reuse existing handler `params_ui` patterns by reading `control.plugins.list` with `include_definition=true`.
 
 Example conditional field pattern:
 

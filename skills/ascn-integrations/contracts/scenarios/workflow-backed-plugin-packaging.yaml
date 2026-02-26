@@ -1,5 +1,5 @@
 id: workflow-backed-plugin-packaging
-version: 0.0.3
+version: 0.0.4
 description: Build missing capability using workflow-backed integration and publish as user plugin.
 
 inputs:
@@ -21,7 +21,9 @@ expected_calls:
   - control.workflows.validate
   - control.workflows.activate
   - control.tools.ensure_export
+  - control.plugins.validate_definition
   - control.plugins.create_plugin
+  - control.plugins.get
   - control.plugins.list
 
 expected_outcome:
