@@ -32,7 +32,7 @@ This repo defines and governs the `ASCN operator` skill used by agents to:
 
 ## Compatibility
 
-- Skill contract version: `0.0.4`
+- Skill contract version: `0.0.5`
 - Requires workspace MCP gateway exposing control tools documented in `SKILL.md`
 - Includes plugin submission tools:
   - `control.plugins.create_plugin`
@@ -51,7 +51,7 @@ Connection shape:
 3. dependency id: `workspace-mcp-gateway`
 4. workspace secret name: `mcp_gateway_token`
 5. auth header: `Authorization: Bearer <token>` (must match secret value)
-6. token source: `https://ascn.ai/no-code/mcp-list`
+6. token generation URL: `https://ascn.ai/no-code/mcp-list`
 
 ## Capability Gap Strategy
 

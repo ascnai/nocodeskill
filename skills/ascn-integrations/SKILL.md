@@ -1,6 +1,6 @@
 ---
 name: ascn-integrations
-version: 0.0.4
+version: 0.0.5
 owner: platform-ai
 maturity: beta
 description: Guide for designing and delivering new ASCN integrations and packaging them as user plugins.
@@ -31,9 +31,7 @@ The integrator MUST collect:
 4. auth/secret requirements
 5. publish target (`user` plugin first, system copy later)
 
-Workspace scope MUST come from runtime authorization/session context (for example MCP `/mcp` bearer-token resolution), not from manual user-provided `workspace_id` input.
-
-If workspace context or contract expectations are missing, stop and return `input_validation_error`.
+If contract expectations are missing, stop and return `input_validation_error`.
 
 ## Required Tool Surface
 
@@ -86,11 +84,12 @@ Mode decision gate:
 4. Implement integration.
 5. Validate workflow/config contract (`control.workflows.validate`).
    - payload MUST be wrapped as `{ "workflow": { ... } }`
-6. Activate export (`control.workflows.activate`, `control.tools.ensure_export`).
+6. Reconcile export (`control.tools.list_exports`, `control.tools.ensure_export`).
 7. Run plugin-definition preflight (`control.plugins.validate_definition`).
-8. Bundle handlers into plugin (`control.plugins.create_plugin` then `update_plugin` if needed).
-9. Verify plugin visibility with `control.plugins.list` and registry views (`control.plugins.get` for deterministic reads).
-10. Return output contract payload with verification evidence.
+8. Activate the final workflow (`control.workflows.activate`).
+9. Bundle handlers into plugin (`control.plugins.create_plugin` then `update_plugin` if needed).
+10. Verify plugin visibility with `control.plugins.list` and registry views (`control.plugins.get` for deterministic reads).
+11. Return output contract payload with verification evidence.
 
 ## Plugin Packaging Rules
 

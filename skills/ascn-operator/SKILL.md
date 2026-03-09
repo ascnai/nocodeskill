@@ -1,6 +1,6 @@
 ---
 name: ascn-operator
-version: 0.0.4
+version: 0.0.5
 owner: platform-ai
 maturity: beta
 description: Workflow and tool-export operator for ASCN workspace MCP control tools.
@@ -40,10 +40,6 @@ Recommended inputs:
 
 If required inputs are missing, stop and return `input_validation_error`.
 
-Workspace scope MUST come from runtime authorization/session context (for example MCP `/mcp` bearer-token resolution), not from manual user-provided `workspace_id` input.
-
-If workspace context is missing, stop and return `input_validation_error`.
-
 ## Dependency And Discovery Policy
 
 At task start, the operator MUST run:
@@ -76,6 +72,8 @@ Connectivity defaults (use as hints, not hard requirements):
 2. dependency id: `workspace-mcp-gateway`
 3. URL hint: `https://nocode.ascn.ai/mcp`
 4. secret hint: `mcp_gateway_token`
+5. auth header: `Authorization: Bearer <token>` (must match secret value)
+6. token generation URL: `https://ascn.ai/no-code/mcp-list`
 
 If discovery fails, do not mutate. Return `dependency_failure` with missing tools and connection hints.
 
@@ -177,7 +175,7 @@ Intent call order:
 
 ## Retry And Stop Rules
 
-1. Operation key format: `{workspace_id}:{intent}:{workflow_id|workflow_name}:{payload_hash}`
+1. Operation key format: `{intent}:{workflow_id|workflow_name}:{payload_hash}`
 2. Retry only transient failures (`timeout`, `5xx`, transport unavailable), max 3 attempts with exponential backoff.
 3. Never auto-retry validation, schema, or export-conflict errors.
 4. Never delete without explicit `confirm=true`.
@@ -190,7 +188,6 @@ Every completion MUST return:
 ```json
 {
   "intent": "create|repair|patch|export|publish_plugin|delete|explain",
-  "workspace_id": "uuid",
   "workflow_id": "uuid-or-null",
   "selected_blueprint": "linear|fanout|conditional|retryable_http|tool_export|null",
   "capability_status": "sufficient|missing_handler|missing_trigger|missing_auth_capability|schema_or_contract_gap",

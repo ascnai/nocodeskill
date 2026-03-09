@@ -1,5 +1,5 @@
 skill_name: ascn-integrations
-version: 0.0.4
+version: 0.0.5
 owner: platform-ai
 maturity: beta
 
@@ -26,7 +26,6 @@ compatibility:
 
 input_contract:
   required_fields:
-    - workspace_id
     - capability_gap_summary
     - target_use_cases
     - expected_contract

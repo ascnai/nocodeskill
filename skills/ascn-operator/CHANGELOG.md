@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.5 - 2026-03-09
+
+- Removed residual `workspace_id` requirements and workspace-selection wording from the operator skill bundle.
+- Restored the hardcoded production MCP gateway URL `https://nocode.ascn.ai/mcp` in operator metadata and references.
+- Aligned operator contracts, scenarios, and recovery messaging with bearer-token workspace resolution at the MCP gateway.
+
 ## 0.0.4 - 2026-02-26
 
 - Added canonical plugin control flow coverage for `control.plugins.get` and `control.plugins.validate_definition`.

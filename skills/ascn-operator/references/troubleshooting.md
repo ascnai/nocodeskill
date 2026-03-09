@@ -4,9 +4,9 @@ Use this table with `contracts/error-taxonomy.yaml`.
 
 ## Fast Triage Order
 
-1. Confirm MCP URL: `https://nocode.ascn.ai/mcp`.
-2. Confirm workspace consistency across all calls.
-3. Confirm target workflow belongs to workspace.
+1. Confirm MCP URL path is `/mcp` on the intended ASCN base URL.
+2. Confirm auth and token configuration are correct.
+3. Confirm target workflow belongs to the active control context.
 4. Confirm validation result before activation.
 5. For runtime failures, inspect latest workflow runs via `control.runs.list`.
 
@@ -43,22 +43,22 @@ Provide this exact checklist to user:
 2. Configure MCP connection:
    - transport: `streamable_http`
    - url: `https://nocode.ascn.ai/mcp`
-3. Ensure workspace secret `mcp_gateway_token` exists and has the expected token value.
-4. Add auth header with the same token: `Authorization: Bearer <token>`.
-5. Obtain token from `https://ascn.ai/no-code/mcp-list`.
+3. Generate or copy the token at `https://ascn.ai/no-code/mcp-list`.
+4. Ensure workspace secret `mcp_gateway_token` exists and has the expected token value.
+5. Add auth header with the same token: `Authorization: Bearer <token>`.
 6. Reconnect MCP client/session.
 7. Retry and verify control tools are visible.
 
 User-facing template:
 
 ```text
-MCP control gateway is not connected for workspace {workspace_id}.
+MCP control gateway is not connected.
 Please configure:
 - transport: streamable_http
 - url: https://nocode.ascn.ai/mcp
+- token source: https://ascn.ai/no-code/mcp-list
 - workspace secret: mcp_gateway_token = <token>
 - Authorization: Bearer <token>
-- token source: https://ascn.ai/no-code/mcp-list
 Reconnect MCP and retry.
 ```
 

@@ -13,7 +13,6 @@ dependencies:
 
 policy:
   allow_implicit_invocation: false
-  require_workspace_id: true
   fail_on_missing_tools: true
   require_reuse_first_analysis: true
   require_plugin_visibility_verification: true

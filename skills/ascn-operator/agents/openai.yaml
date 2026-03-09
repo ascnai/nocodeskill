@@ -13,7 +13,6 @@ dependencies:
 
 policy:
   allow_implicit_invocation: false
-  require_workspace_id: true
   fail_on_missing_tools: true
   require_blueprint_selection: true
   require_minimal_valid_first_draft: true
@@ -37,13 +36,13 @@ playbooks:
   mcp_not_connected:
     reference: "../references/troubleshooting.md#mcp-not-connected-user-instruction-runbook"
     user_message_template: |
-      MCP control gateway is not connected for workspace {workspace_id}.
+      MCP control gateway is not connected.
       Please configure:
       - transport: streamable_http
       - url: https://nocode.ascn.ai/mcp
+      - token source: https://ascn.ai/no-code/mcp-list
       - workspace secret: mcp_gateway_token = <token>
       - Authorization: Bearer <token>
-      - token source: https://ascn.ai/no-code/mcp-list
       Reconnect MCP and retry.
   capability_gap:
     reference: "../references/integration-proposals.md"

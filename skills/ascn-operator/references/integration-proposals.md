@@ -109,7 +109,7 @@ Recommended path: connect external MCP tool.
 Why: adds reusable capability without building internal handler now.
 
 Planned steps:
-1) connect MCP server/tool for workspace `{workspace_id}`
+1) connect MCP server/tool
 2) verify tool schema/auth and availability in control surface
 3) integrate tool into workflow, validate, activate
 

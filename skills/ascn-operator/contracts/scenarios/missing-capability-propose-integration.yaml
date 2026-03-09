@@ -1,10 +1,9 @@
 id: missing-capability-propose-integration
-version: 0.0.4
+version: 0.0.5
 description: Required capability does not exist; agent must propose reusable integration options and request user decision.
 
 inputs:
   intent: create
-  workspace_id: "<uuid>"
   capability_status: missing_handler
 
 expected_calls:

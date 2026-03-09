@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.5 - 2026-03-09
+
+- Removed residual `workspace_id` input requirements and workspace-selection wording from the integrations skill bundle.
+- Restored the hardcoded production MCP gateway URL `https://nocode.ascn.ai/mcp` in integrations metadata and references.
+- Kept the integrations flow aligned with the live control-tool surface after the operator/auth cleanup.
+
 ## 0.0.4 - 2026-02-26
 
 - Added plugin packaging preflight step using `control.plugins.validate_definition`.

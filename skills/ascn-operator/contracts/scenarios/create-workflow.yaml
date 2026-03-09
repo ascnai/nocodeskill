@@ -1,10 +1,9 @@
 id: create-workflow-linear
-version: 0.0.4
+version: 0.0.5
 description: Create and activate a new linear workflow with clear graph edges.
 
 inputs:
   intent: create
-  workspace_id: "<uuid>"
 
 expected_calls:
   - control.docs.get

@@ -1,10 +1,9 @@
 id: publish-workspace-plugin
-version: 0.0.4
+version: 0.0.5
 description: Submit a workspace user plugin bundle and return user-category visibility state.
 
 inputs:
   intent: publish_plugin
-  workspace_id: "<uuid>"
   plugin_name: CustomerOps
   handlers:
     - User.FetchCustomer

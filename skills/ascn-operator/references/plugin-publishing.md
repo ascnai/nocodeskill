@@ -24,7 +24,7 @@ Publishing is user-facing:
 
 ## Submission Flow (Workspace Side)
 
-1. collect `workspace_id`, `plugin_name`, and handler IDs
+1. collect `plugin_name` and handler IDs
 2. call `control.registry.details` for every handler to confirm IDs and schemas
 3. call `control.plugins.list` with `include_definition=true` to inspect existing handler `params_ui` examples
 4. build plugin definition payload
